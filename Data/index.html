@@ -165,6 +165,7 @@
       padding: 0 20px;
       background: var(--surface);
       border-bottom: 1px solid var(--line);
+      box-shadow: 0 8px 24px rgba(16, 24, 40, 0.03);
       z-index: 5;
     }
 
@@ -212,6 +213,38 @@
       gap: 8px;
       flex: none;
     }
+
+    .app-actions .btn {
+      height: 40px;
+      border-radius: 12px;
+      transition: background 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+    }
+
+    .app-actions .btn-secondary {
+      background: #fff;
+      color: var(--ink);
+      font-weight: 700;
+      border: 1px solid #d7dbe1;
+      box-shadow: 0 1px 1px rgba(16, 24, 40, 0.04);
+    }
+
+    .app-actions .btn-secondary:hover {
+      background: #f6f7f9;
+      border-color: #c5cbd3;
+    }
+
+    #add-btn {
+      gap: 6px;
+      padding-inline: 13px 15px;
+      border: 1px solid #0056c4;
+      box-shadow: 0 1px 1px rgba(0, 50, 140, 0.18), 0 6px 14px rgba(0, 100, 224, 0.2);
+    }
+
+    #add-btn:hover {
+      box-shadow: 0 1px 1px rgba(0, 50, 140, 0.18), 0 8px 18px rgba(0, 100, 224, 0.28);
+    }
+
+    #add-btn svg { flex: none; }
 
     .save-pill {
       font-size: 0.78rem;
@@ -1179,37 +1212,41 @@
       width: 100%;
       display: flex;
       align-items: center;
-      gap: 12px;
-      padding: 12px 14px;
-      border: 1px dashed #c9d0da;
-      border-radius: 16px;
-      background: #f7f9fc;
+      gap: 14px;
+      padding: 14px 16px;
+      border: 1px solid #e6e9ee;
+      border-radius: 18px;
+      background: #fff;
+      box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 8px 22px rgba(16, 24, 40, 0.04);
       text-align: start;
+      transition: border-color 160ms ease, box-shadow 160ms ease;
     }
 
-    .intake-toggle:hover { background: #eef3f9; border-color: #b7c3d4; }
+    .intake-toggle:hover {
+      border-color: #c5d4ea;
+      box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 12px 28px rgba(0, 100, 224, 0.08);
+    }
 
     .intake-board.is-open .intake-toggle {
-      border-style: solid;
       border-color: var(--line);
       border-bottom-left-radius: 0;
       border-bottom-right-radius: 0;
       background: #fff;
+      box-shadow: none;
     }
 
     .intake-plus {
       flex: none;
-      width: 36px;
-      height: 36px;
+      width: 40px;
+      height: 40px;
       display: grid;
       place-items: center;
-      border-radius: 10px;
-      background: var(--blue);
-      color: #fff;
-      font-size: 1.45rem;
-      font-weight: 700;
-      line-height: 1;
+      border-radius: 12px;
+      background: var(--blue-soft);
+      color: var(--blue);
     }
+
+    .intake-plus svg { display: block; }
 
     .intake-copy { min-width: 0; flex: 1; }
 
@@ -1228,9 +1265,17 @@
 
     .intake-chevron {
       flex: none;
+      width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      background: var(--chip);
       color: var(--secondary);
-      transition: transform 180ms ease;
+      transition: transform 180ms ease, background 160ms ease, color 160ms ease;
     }
+
+    .intake-toggle:hover .intake-chevron { background: var(--blue-soft); color: var(--blue); }
 
     .intake-chevron.is-open { transform: rotate(180deg); color: var(--blue); }
 
@@ -2140,6 +2185,8 @@
 
     .archive-board { margin-top: 36px; }
 
+    .archive-screen .archive-board { margin-top: 4px; }
+
     .archive-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(200px, 240px));
@@ -2443,10 +2490,10 @@
     .finder {
       flex: none;
       display: grid;
-      grid-template-columns: minmax(240px, 0.85fr) minmax(0, 2.15fr);
+      grid-template-columns: minmax(240px, 0.9fr) minmax(0, 2.1fr);
       align-items: end;
-      gap: 2px 12px;
-      padding: 8px 14px 6px;
+      gap: 8px 16px;
+      padding: 14px 16px 10px;
       background: var(--surface);
       border-bottom: 1px solid var(--line);
     }
@@ -2455,55 +2502,133 @@
 
     .finder .label-row {
       justify-content: flex-start;
-      margin-bottom: 3px;
+      margin-bottom: 5px;
       gap: 6px;
     }
 
     .finder .field-label {
-      margin-bottom: 3px;
-      font-size: 0.68rem;
-      letter-spacing: 0.01em;
+      margin-bottom: 5px;
+      color: #6d727a;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
     }
 
-    .finder kbd {
-      font-size: 0.66rem;
-      padding: 0 5px;
-      line-height: 1.45;
+    .finder .label-row .field-label { margin-bottom: 0; }
+
+    .finder .search-kbd {
+      position: absolute;
+      top: 50%;
+      inset-inline-end: 8px;
+      transform: translateY(-50%);
+      min-width: 22px;
+      padding: 0 6px;
+      border-color: #e1e4e8;
+      border-radius: 6px;
+      background: #fff;
+      color: #8b9098;
+      font-size: 0.72rem;
+      line-height: 1.55;
+      text-align: center;
+      pointer-events: none;
+      box-shadow: 0 1px 0 rgba(16, 24, 40, 0.05);
+      transition: opacity 140ms ease;
     }
+
+    .finder .search-wrap:focus-within .search-kbd { opacity: 0; }
 
     .finder .search,
     .finder select {
-      height: 32px;
-      border-radius: 8px;
-      font-size: 0.88rem;
+      height: 40px;
+      border: 1px solid transparent;
+      border-radius: 12px;
+      background-color: var(--chip);
+      font-size: 0.9rem;
+      transition: background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
     }
 
     .finder .search {
-      padding-inline-start: 34px;
-      padding-inline-end: 10px;
-      background-color: var(--surface);
-      border: 1px solid var(--line);
+      padding-inline-start: 40px;
+      padding-inline-end: 40px;
+      font-weight: 500;
+    }
+
+    .finder .search:hover,
+    .finder select:hover {
+      background-color: #fff;
+      border-color: #d5dae1;
+    }
+
+    .finder .search::-webkit-search-decoration,
+    .finder .search::-webkit-search-cancel-button {
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    .finder .search:focus-visible,
+    .finder select:focus-visible {
+      outline: none;
+      background-color: #fff;
+      border-color: var(--blue);
+      box-shadow: 0 0 0 4px rgba(0, 100, 224, 0.14);
     }
 
     .finder .search-wrap svg {
-      inset-inline-start: 10px;
-      width: 16px;
-      height: 16px;
+      inset-inline-start: 13px;
+      width: 17px;
+      height: 17px;
+      color: #8b9098;
+      transition: color 160ms ease;
     }
+
+    .finder .search-wrap:focus-within svg { color: var(--blue); }
 
     .finder .filters {
       grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 0 8px;
+      gap: 0 10px;
       margin-top: 0;
+    }
+
+    .finder select {
+      padding-inline-start: 12px;
+      font-weight: 600;
+    }
+
+    .finder select.is-active {
+      border-color: transparent;
+      box-shadow: inset 0 0 0 1.5px var(--blue);
+    }
+
+    .finder select.is-active:hover {
+      background-color: #dceaff;
+      border-color: transparent;
     }
 
     .finder .result-row {
       grid-column: 1 / -1;
-      min-height: 0;
-      margin-top: 2px;
+      min-height: 26px;
+      margin-top: 0;
     }
 
-    .finder .result-line { font-size: 0.75rem; }
+    .finder .result-line {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      font-size: 0.78rem;
+      letter-spacing: 0.01em;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    #clear-btn {
+      height: 26px;
+      padding: 0 10px;
+      border-radius: 999px;
+      background: var(--blue-soft);
+      font-size: 0.78rem;
+    }
+
+    #clear-btn:hover { background: #d7e8ff; }
 
     .roster-body {
       flex: 1;
@@ -2543,19 +2668,56 @@
     }
 
     body.units-home .finder {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr);
-      gap: 4px;
-      padding: 12px 20px 8px;
-      background: var(--canvas);
-      border-bottom: none;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      gap: 10px 12px;
+      width: max-content;
+      max-width: calc(100% - 70px);
+      margin-top: 12px;
+      margin-inline-start: 30px;
+      margin-inline-end: auto;
+      padding: 12px 14px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 8px 22px rgba(16, 24, 40, 0.04);
+    }
+
+    body.units-home .finder .search-wrap-block {
+      flex: none;
+      width: 420px;
+      max-width: 46vw;
     }
 
     body.units-home .finder .filters {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 6px 12px;
-      margin-top: 2px;
+      display: flex;
+      flex: none;
+      gap: 10px;
+      margin: 0;
+    }
+
+    body.units-home .finder .filter { width: 188px; }
+
+    body.units-home .finder .result-row { flex: 1 0 100%; }
+
+    body.units-home .finder .search,
+    body.units-home .finder select {
+      background-color: var(--chip);
+      border-color: transparent;
+      box-shadow: none;
+    }
+
+    body.units-home .finder .search:hover,
+    body.units-home .finder select:hover {
+      background-color: #fff;
+      border-color: #d5dae1;
+    }
+
+    body.units-home .finder select.is-active {
+      background-color: var(--blue-soft);
+      border-color: transparent;
+      box-shadow: inset 0 0 0 1.5px var(--blue);
     }
 
     body.units-home .filter-roster { display: none; }
@@ -4202,11 +4364,12 @@
 
     #log-btn .notice-dot {
       position: absolute;
-      top: 5px;
-      inset-inline-end: 6px;
+      top: 6px;
+      inset-inline-end: 7px;
+      box-shadow: 0 0 0 2px #fff;
     }
 
-    #log-btn:hover .notice-dot { box-shadow: 0 0 0 2px #d8dadf; }
+    #log-btn:hover .notice-dot { box-shadow: 0 0 0 2px #f6f7f9; }
 
     .notice-dot[hidden] { display: none; }
 
@@ -5684,12 +5847,27 @@
     }
 
     @media (max-width: 1180px) {
-      .finder { grid-template-columns: 1fr; gap: 6px; }
-      .finder .filters { grid-template-columns: 1fr 1fr; gap: 6px 8px; }
+      .finder { grid-template-columns: 1fr; gap: 8px; }
+      .finder .filters { grid-template-columns: 1fr 1fr; gap: 8px 10px; }
+      body.units-home .finder {
+        width: auto;
+        margin-inline: 16px;
+      }
+      body.units-home .finder .search-wrap-block {
+        flex: 1 1 220px;
+        width: auto;
+        max-width: none;
+      }
+      body.units-home .finder .filters { flex: 1 1 auto; }
+      body.units-home .finder .filter { flex: 1 1 150px; width: auto; }
     }
 
     @media (max-width: 860px) {
       .appbar { padding: 0 14px; height: 68px; }
+      .app-actions { gap: 6px; }
+      .app-actions .btn { height: 36px; padding-inline: 10px; font-size: 0.86rem; }
+      #add-btn { padding-inline: 10px 12px; }
+      .finder .search { padding-inline-end: 12px; }
       .file-note { flex-wrap: wrap; padding: 8px 14px; }
       .brand-mark { height: 48px; }
       .brand-mark-idf { height: 42px; width: 42px; }
@@ -5725,8 +5903,9 @@
 
     @media (max-width: 420px) {
       .filters,
-      .finder .filters,
-      body.units-home .finder .filters { grid-template-columns: 1fr; }
+      .finder .filters { grid-template-columns: 1fr; }
+      body.units-home .finder .filters { flex-direction: column; }
+      body.units-home .finder .filter { width: 100%; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -5818,7 +5997,8 @@
     <div class="app-actions">
     <span class="save-pill" id="save-pill" hidden>נשמר בקובץ</span>
     <button class="btn btn-secondary" id="log-btn" type="button">יומן<span class="notice-dot" hidden aria-hidden="true"></span></button>
-    <button class="btn btn-primary" id="add-btn" type="button">חייל חדש</button>
+    <button class="btn btn-secondary" id="archive-btn" type="button">מחוץ לשיבוץ</button>
+    <button class="btn btn-primary" id="add-btn" type="button"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>חייל חדש</button>
     </div>
   </header>
   <div class="file-note" id="file-note" hidden>
@@ -5835,14 +6015,14 @@
         <div class="search-wrap-block">
           <div class="label-row">
             <label class="field-label" for="search">חיפוש</label>
-            <kbd title="קיצור מקלדת">/</kbd>
           </div>
           <div class="search-wrap">
             <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="11" cy="11" r="7"></circle>
               <path d="M20 20l-3.2-3.2"></path>
             </svg>
-            <input class="search" id="search" type="search" inputmode="search" autocomplete="off" spellcheck="false" placeholder="שם, מ״א, טלפון, עיר">
+            <input class="search" id="search" type="search" inputmode="search" autocomplete="off" spellcheck="false" placeholder="שם, מ״א, טלפון או עיר">
+            <kbd class="search-kbd" title="קיצור מקלדת">/</kbd>
           </div>
         </div>
         <div class="filters">
@@ -5869,7 +6049,7 @@
         </div>
         <div class="result-row">
           <p class="result-line" id="result-line">כל הרשימה מוצגת</p>
-          <button class="text-btn" id="clear-btn" type="button" hidden>נקה</button>
+          <button class="text-btn" id="clear-btn" type="button" hidden>נקה סינון</button>
         </div>
       </div>
       <div class="roster-body">
@@ -5925,6 +6105,7 @@
 
     var ICONS = {
       search: '<circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.2-3.2"></path>',
+      plus: '<path d="M12 5v14M5 12h14"></path>',
       phone: '<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.32 1.77.57 2.61a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.84.25 1.71.45 2.61.57A2 2 0 0 1 22 16.92z"></path>',
       id: '<rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M7 10h4M7 14h10"></path>',
       pin: '<path d="M12 21s7-5.33 7-11a7 7 0 1 0-14 0c0 5.67 7 11 7 11z"></path><circle cx="12" cy="10" r="2.25"></circle>',
@@ -6333,6 +6514,8 @@
       logOpen: false,
       logQuery: "",
       logTab: "transfers",
+      archiveOpen: false,
+      archiveQuery: "",
       outsideOpen: false,
       outsideKind: "departed",
       intakeOpen: false,
@@ -7601,18 +7784,22 @@
     }
 
     function syncFromProfileScroll() {
-      if (profileSpyHold || state.unitsHome || state.logOpen || state.creating || state.editingIndex >= 0 || state.transferring) return;
+      if (profileSpyHold || state.unitsHome || state.logOpen || state.archiveOpen || state.creating || state.editingIndex >= 0 || state.transferring) return;
       followProfileSoldier(soldierAtProfileTop());
     }
 
     function syncShell() {
       var narrow = window.matchMedia("(max-width: 860px)").matches;
-      document.body.classList.toggle("units-home", Boolean(state.unitsHome || state.logOpen));
-      document.body.classList.toggle("log-open", Boolean(state.logOpen));
+      var sheet = state.logOpen || state.archiveOpen;
+      document.body.classList.toggle("units-home", Boolean(state.unitsHome || sheet));
+      document.body.classList.toggle("log-open", Boolean(sheet));
       document.body.classList.toggle("released-open", Boolean(state.releasedOpen));
-      document.body.classList.toggle("profile-open", Boolean(!state.unitsHome && !state.logOpen && narrow && state.profileOpen && (state.selectedKey || state.creating || state.editingIndex >= 0 || state.transferring || state.shalishutOpen)));
+      document.body.classList.toggle("profile-open", Boolean(!state.unitsHome && !sheet && narrow && state.profileOpen && (state.selectedKey || state.creating || state.editingIndex >= 0 || state.transferring || state.shalishutOpen)));
+      var busy = state.creating || state.editingIndex >= 0 || state.transferring;
       var logBtn = document.getElementById("log-btn");
-      if (logBtn) logBtn.hidden = Boolean(state.logOpen || state.creating || state.editingIndex >= 0 || state.transferring);
+      if (logBtn) logBtn.hidden = Boolean(state.logOpen || busy);
+      var archiveBtn = document.getElementById("archive-btn");
+      if (archiveBtn) archiveBtn.hidden = Boolean(state.archiveOpen || busy);
       syncStudyNotice();
     }
 
@@ -9551,14 +9738,25 @@
         "</button></article>";
     }
 
-    function renderArchiveBoard() {
-      var narrowed = homeNarrowed();
+    function archiveTotal() {
+      var total = 0;
+      UNITS.forEach(function (unit) { total += unitReleasedCount(unit.id); });
+      SOLDIERS.forEach(function (soldier) {
+        if (isUnassigned(soldier) && !freshUnassigned(soldier)) total += 1;
+      });
+      return total;
+    }
+
+    function archiveLogView(query) {
       var cards = [];
-      var releasedShown = 0;
+      var shown = 0;
       UNITS.forEach(function (unit) {
-        var people = releasedInUnit(unit.id);
+        var people = SOLDIERS.filter(function (soldier) {
+          if (unitId(soldier.unit) !== unit.id || !isReleased(soldier)) return false;
+          return logQueryHit([soldier.name, soldier.personalId, soldier.profession, soldier.cycle, soldier.tatash, unit.name, "משוחרר"], query);
+        });
         if (!people.length) return;
-        releasedShown += people.length;
+        shown += people.length;
         cards.push(archiveCard({
           name: unit.name,
           sub: "משוחררים",
@@ -9568,11 +9766,15 @@
           action: "open-released",
           unit: unit.id,
           label: "הצגת המשוחררים ב" + unit.name,
-          hit: narrowed
+          hit: Boolean(query)
         }));
       });
-      var outside = unassignedPeople();
+      var outside = SOLDIERS.filter(function (soldier) {
+        if (!isUnassigned(soldier) || freshUnassigned(soldier)) return false;
+        return logQueryHit([soldier.name, soldier.personalId, soldier.profession, soldier.cycle, soldier.tatash, "ללא יחידה"], query);
+      });
       if (outside.length) {
+        shown += outside.length;
         cards.push(archiveCard({
           name: "ללא יחידה",
           sub: "יצאו משיבוץ",
@@ -9581,22 +9783,13 @@
           many: "חיילים",
           action: "open-unassigned",
           label: "הצגת החיילים ללא יחידה",
-          hit: narrowed
+          hit: Boolean(query)
         }));
       }
-      if (!cards.length && narrowed) return "";
-      var leadParts = [];
-      if (releasedShown) leadParts.push(releasedShown + " " + countWord(releasedShown, "משוחרר", "משוחררים"));
-      if (outside.length) leadParts.push(outside.length + " " + countWord(outside.length, "חייל ללא יחידה", "חיילים ללא יחידה"));
-      var lead = leadParts.length
-        ? leadParts.join(" · ")
-        : "חייל שמשתחרר, או שיוצא משיבוץ מכל סיבה, יופיע כאן בכרטיס של היחידה.";
-      return '<section class="archive-board" aria-label="משוחררים וללא יחידה">' +
-        '<div class="units-board-head"><h2>משוחררים וללא יחידה</h2><p>' + esc(lead) + "</p></div>" +
-        (cards.length
-          ? '<div class="archive-grid">' + cards.join("") + "</div>"
-          : '<div class="log-empty">אין משוחררים ואין חיילים ללא יחידה</div>') +
-      "</section>";
+      var html = cards.length
+        ? '<section class="archive-board" aria-label="מחוץ לשיבוץ"><div class="archive-grid">' + cards.join("") + "</div></section>"
+        : '<div class="log-empty">' + (query ? "אין תואמים" : "אין חיילים מחוץ לשיבוץ. חייל שמשתחרר, או שיוצא משיבוץ מכל סיבה, יופיע כאן.") + "</div>";
+      return { shown: shown, html: html };
     }
 
     function openUnassigned(key, kind) {
@@ -9605,6 +9798,7 @@
       state.releasedOpen = false;
       state.unitsHome = false;
       state.logOpen = false;
+      state.archiveOpen = false;
       state.unitOpen = false;
       state.creating = false;
       state.editingIndex = -1;
@@ -9647,7 +9841,7 @@
       }).join("");
       return '<section class="intake-board' + (open ? " is-open" : "") + '" id="intake-board">' +
         '<button class="intake-toggle" type="button" data-action="toggle-intake" aria-expanded="' + (open ? "true" : "false") + '" aria-controls="intake-panel">' +
-          '<span class="intake-plus" aria-hidden="true">+</span>' +
+          '<span class="intake-plus" aria-hidden="true">' + svg("plus", 18) + "</span>" +
           '<span class="intake-copy"><span class="intake-title">הוספת חיילים</span><span class="intake-sub">מהעמוד הראשי, בלי להיכנס ליחידה</span></span>' +
           '<span class="intake-chevron' + (open ? " is-open" : "") + '">' + svg("chevronDown", 18) + "</span>" +
         "</button>" +
@@ -10698,18 +10892,11 @@
       if (narrowed) {
         UNITS.forEach(function (unit) {
           var n = soldiersInUnit(unit.id).length;
-          var releasedHits = releasedInUnit(unit.id).length;
-          if (n) matched += n;
-          if (releasedHits) matched += releasedHits;
-          if (n || releasedHits) hitNames.push(unit.name);
+          if (n) {
+            matched += n;
+            hitNames.push(unit.name);
+          }
         });
-        var outsideHits = SOLDIERS.filter(function (soldier) {
-          return isUnassigned(soldier) && !freshUnassigned(soldier) && matches(soldier, queryRaw.toLowerCase(), filters);
-        }).length;
-        if (outsideHits) {
-          matched += outsideHits;
-          hitNames.push("ללא יחידה");
-        }
         var freshHits = SOLDIERS.filter(function (soldier) {
           return freshUnassigned(soldier) && matches(soldier, queryRaw.toLowerCase(), filters);
         }).length;
@@ -10743,7 +10930,6 @@
             '<div class="units-stage-main"><div class="unit-grid">' + UNITS.map(renderUnitCard).join("") + addTile + "</div></div>" +
             renderUnitStats() +
           "</div>" +
-          renderArchiveBoard() +
         "</div>";
       document.getElementById("add-btn").hidden = true;
       document.getElementById("print-root").innerHTML = "";
@@ -11194,6 +11380,7 @@
       state.transferError = "";
       state.transferDraft = null;
       state.logOpen = false;
+      state.archiveOpen = false;
       state.outsideOpen = false;
       state.releasedOpen = false;
       state.profileOpen = false;
@@ -11237,6 +11424,8 @@
       var fromHome = state.unitsHome;
       state.unitsHome = false;
       state.outsideOpen = false;
+      state.logOpen = false;
+      state.archiveOpen = false;
       state.unitOpen = false;
       closeUnitEditor();
       if (id !== state.unit) {
@@ -11395,6 +11584,7 @@
       state.transferError = "";
       state.transferDraft = null;
       state.logOpen = false;
+      state.archiveOpen = false;
       state.outsideOpen = false;
       state.releasedOpen = false;
       closeShalishutEditor();
@@ -12082,6 +12272,7 @@
       state.editingIndex = -1;
       state.draft = blankDraft();
       state.logOpen = false;
+      state.archiveOpen = false;
       state.unitsHome = false;
       state.shalishutOpen = false;
       closeShalishutEditor();
@@ -12226,6 +12417,7 @@
       state.editingIndex = -1;
       if (external) {
         state.logOpen = false;
+        state.archiveOpen = false;
         state.unitsHome = false;
         state.outsideOpen = true;
         state.outsideKind = "departed";
@@ -12234,6 +12426,7 @@
         return;
       }
       state.logOpen = false;
+      state.archiveOpen = false;
       state.outsideOpen = false;
       state.unitsHome = false;
       state.prevKey = "";
@@ -12392,6 +12585,7 @@
 
     function openLog() {
       state.logOpen = true;
+      state.archiveOpen = false;
       state.logQuery = "";
       state.logTab = "transfers";
       state.creating = false;
@@ -12414,10 +12608,67 @@
       render();
     }
 
+    function openArchive() {
+      state.archiveOpen = true;
+      state.archiveQuery = "";
+      state.logOpen = false;
+      state.creating = false;
+      state.editingIndex = -1;
+      state.transferring = false;
+      state.transferError = "";
+      state.transferDraft = null;
+      state.shalishutOpen = false;
+      closeShalishutEditor();
+      render({ focusArchiveSearch: true });
+    }
+
+    function closeArchive() {
+      state.archiveOpen = false;
+      state.archiveQuery = "";
+      render();
+    }
+
+    function renderArchiveScreen(opts) {
+      opts = opts || {};
+      document.body.classList.remove("home-query");
+      document.getElementById("add-btn").hidden = true;
+      document.getElementById("profile").setAttribute("aria-label", "מחוץ לשיבוץ");
+      var profile = document.getElementById("profile");
+      var query = clean(state.archiveQuery).toLowerCase();
+      var view = archiveLogView(query);
+      var total = archiveTotal();
+      var summary = total
+        ? (query ? "מוצגים " + view.shown + " מתוך " + total : total + " " + countWord(total, "חייל מחוץ לשיבוץ", "חיילים מחוץ לשיבוץ"))
+        : "אין חיילים מחוץ לשיבוץ";
+      var note = "משוחררים לפי היחידה שממנה יצאו, וחיילים שיצאו משיבוץ מכל סיבה. לחיצה על כרטיס פותחת את הרשימה.";
+      profile.innerHTML =
+        '<div class="units-board archive-screen">' +
+          '<div class="log-head"><div>' + navBack("close-archive", logBackLabel(), { esc: true }) + '<h2>מחוץ לשיבוץ</h2><p>' + esc(summary) + ". " + esc(note) + "</p></div>" +
+          '<input class="log-search" id="archive-search" type="search" value="' + esc(state.archiveQuery) + '" placeholder="חייל, יחידה או מקצוע" aria-label="חיפוש מחוץ לשיבוץ">' +
+          "</div>" +
+          view.html +
+        "</div>";
+      document.getElementById("print-root").innerHTML = "";
+      document.title = "מחוץ לשיבוץ · " + CONFIG.title;
+      syncHash("");
+      var search = document.getElementById("archive-search");
+      if (search && opts.focusArchiveSearch) {
+        search.focus();
+        var pos = search.value.length;
+        if (search.setSelectionRange) search.setSelectionRange(pos, pos);
+      }
+      var announce = "מחוץ לשיבוץ. " + summary;
+      if (state.announced !== announce) {
+        state.announced = announce;
+        document.getElementById("live").textContent = announce;
+      }
+    }
+
     function openPosted(key) {
       var soldier = findSoldier(SOLDIERS, key);
       if (!soldier || clean(soldier.external) || !unitId(soldier.unit)) return;
       state.logOpen = false;
+      state.archiveOpen = false;
       state.outsideOpen = false;
       state.releasedOpen = isReleased(soldier);
       state.transferring = false;
@@ -12685,6 +12936,10 @@
       syncShell();
       if (state.logOpen) {
         renderTransferLog(opts);
+        return;
+      }
+      if (state.archiveOpen) {
+        renderArchiveScreen(opts);
         return;
       }
       if (state.unitsHome) {
@@ -13076,6 +13331,7 @@
       document.getElementById("clear-btn").addEventListener("click", clearFilters);
       document.getElementById("add-btn").addEventListener("click", openCreator);
       document.getElementById("log-btn").addEventListener("click", openLog);
+      document.getElementById("archive-btn").addEventListener("click", openArchive);
       document.getElementById("profile").addEventListener("scroll", function () {
         if (hitPopUnit) {
           var hitTile = hitTileFor(hitPopUnit);
@@ -13259,6 +13515,11 @@
           render({ focusLogSearch: true });
           return;
         }
+        if (event.target && event.target.id === "archive-search") {
+          state.archiveQuery = event.target.value;
+          render({ focusArchiveSearch: true });
+          return;
+        }
         var form = event.target.form;
         if (!form || !form.classList || !form.classList.contains("unit-edit")) return;
         state.unitDraft = readUnitForm(form);
@@ -13413,6 +13674,10 @@
           closeLog();
           return;
         }
+        if (event.target.closest("[data-action='close-archive']")) {
+          closeArchive();
+          return;
+        }
         var dismissBtn = event.target.closest("[data-action='dismiss-notice']");
         if (dismissBtn) {
           dismissNotices([dismissBtn.getAttribute("data-notice") || ""]);
@@ -13495,6 +13760,11 @@
         var unassignedBtn = event.target.closest("[data-action='open-unassigned']");
         if (unassignedBtn) {
           openUnassigned(unassignedBtn.getAttribute("data-key") || "");
+          return;
+        }
+        var releasedBtn = event.target.closest("[data-action='open-released']");
+        if (releasedBtn) {
+          enterReleased(releasedBtn.getAttribute("data-unit"));
           return;
         }
         if (state.unitsHome) {
@@ -13619,11 +13889,6 @@
           var shalishutBtn = event.target.closest("[data-action='open-shalishut']");
           if (shalishutBtn) {
             enterUnit(shalishutBtn.getAttribute("data-unit"), { shalishut: true });
-            return;
-          }
-          var releasedBtn = event.target.closest("[data-action='open-released']");
-          if (releasedBtn) {
-            enterReleased(releasedBtn.getAttribute("data-unit"));
             return;
           }
           var openBtn = event.target.closest("[data-action='open-unit']");
@@ -13807,6 +14072,10 @@
         }
         if (event.key === "Escape" && state.logOpen) {
           closeLog();
+          return;
+        }
+        if (event.key === "Escape" && state.archiveOpen) {
+          closeArchive();
           return;
         }
         if (event.key === "Escape" && state.editingShalishut) {
