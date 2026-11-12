@@ -1,0 +1,6 @@
+# Customer data - never commit, never overwrite on update
+hebet-data.txt
+hebet-data.txt.tmp
+backups/
+hebet-server.log
+*.tmp

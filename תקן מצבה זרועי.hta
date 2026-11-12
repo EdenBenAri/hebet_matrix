@@ -1,0 +1,265 @@
+﻿<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<title>תקן מצבה זרועי</title>
+<hta:application
+  id="hebetApp"
+  applicationname="HebetMatrixLauncher"
+  border="thin"
+  borderstyle="normal"
+  caption="yes"
+  contextmenu="no"
+  innerborder="no"
+  maximizebutton="no"
+  minimizebutton="yes"
+  scroll="no"
+  selection="no"
+  showintaskbar="yes"
+  singleinstance="yes"
+  sysmenu="yes"
+  windowstate="normal">
+<script type="text/javascript">
+  // Size and center the window before anything paints.
+  (function () {
+    var w = 460, h = 330;
+    try {
+      window.resizeTo(w, h);
+      window.moveTo(Math.max(0, (screen.availWidth - w) / 2), Math.max(0, (screen.availHeight - h) / 2));
+    } catch (e) {}
+  })();
+</script>
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: #07111f;
+    font-family: "Segoe UI", Arial, sans-serif;
+    cursor: default;
+  }
+  body {
+    background-image:
+      radial-gradient(ellipse 340px 260px at 50% 40%, rgba(0, 100, 224, 0.30), transparent 70%),
+      linear-gradient(180deg, #10284a 0%, #07111f 55%, #04101c 100%);
+  }
+  .wrap {
+    position: absolute;
+    top: 0; right: 0; bottom: 0; left: 0;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -ms-flex-align: center;
+    align-items: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0 24px;
+  }
+  .logo {
+    width: 92px;
+    height: 92px;
+    border-radius: 18px;
+    background: #2b3038;
+    box-shadow: 0 12px 34px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.07);
+  }
+  .logo img { width: 92px; height: 92px; display: block; }
+  .title {
+    margin: 18px 0 0;
+    color: #fff;
+    font-size: 23px;
+    font-weight: 700;
+  }
+  .status {
+    margin: 6px 0 0;
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 14px;
+    line-height: 1.45;
+  }
+  .status.is-error { color: #ffb4b4; }
+  .bar {
+    width: 132px;
+    height: 3px;
+    margin-top: 18px;
+    overflow: hidden;
+    border-radius: 99px;
+    background: rgba(255, 255, 255, 0.14);
+  }
+  .bar span {
+    display: block;
+    width: 42%;
+    height: 100%;
+    border-radius: 99px;
+    background: #4da3ff;
+    animation: slide 1.15s ease-in-out infinite;
+  }
+  @keyframes slide {
+    0% { transform: translateX(140%); }
+    100% { transform: translateX(-240%); }
+  }
+  .retry {
+    margin-top: 16px;
+    height: 36px;
+    padding: 0 20px;
+    border: none;
+    border-radius: 8px;
+    background: #0064e0;
+    color: #fff;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .retry:hover { background: #0054c6; }
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="logo"><img id="loader" src="Data/Heber_Loader.gif" alt=""></div>
+    <div class="title">תקן מצבה זרועי</div>
+    <div class="status" id="status">פותח את הפרויקט</div>
+    <div class="bar" id="bar"><span></span></div>
+    <button class="retry hidden" id="retry" type="button">נסו שוב</button>
+  </div>
+
+<script type="text/javascript">
+  var PORTS = [18765, 18766, 18767];
+  var WAIT_MS = 25000;
+  var fso, shell, appDir, dataDir;
+
+  function $(id) { return document.getElementById(id); }
+
+  function setStatus(text, isError) {
+    var el = $("status");
+    el.innerText = text;
+    el.className = isError ? "status is-error" : "status";
+    $("bar").className = isError ? "bar hidden" : "bar";
+    $("retry").className = isError ? "retry" : "retry hidden";
+  }
+
+  // The folder of this .hta file, taken from the command line mshta received.
+  function getAppDir() {
+    var cmd = "";
+    try { cmd = String(hebetApp.commandLine || ""); } catch (e) {}
+    var path = "";
+    var m = /^\s*"([^"]+)"/.exec(cmd);
+    if (m) path = m[1];
+    else if (cmd) path = cmd.split(/\s+/)[0];
+    if (!path || !/\.hta$/i.test(path)) {
+      path = decodeURIComponent(String(location.pathname || "")).replace(/\//g, "\\");
+      if (/^\\[A-Za-z]:\\/.test(path)) path = path.substring(1);
+      else if (/^\\\\?[^\\]/.test(path) && location.host) path = "\\\\" + location.host + path;
+    }
+    return fso.GetParentFolderName(path);
+  }
+
+  function norm(text) {
+    return String(text || "").replace(/\\\\/g, "\\").replace(/\\+$/, "").toLowerCase();
+  }
+
+  function startServer() {
+    var ps = shell.ExpandEnvironmentStrings("%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe");
+    var script = dataDir + "\\hebet-server.ps1";
+    var cmd = '"' + ps + '" -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File "' + script + '"';
+    try { shell.CurrentDirectory = dataDir; } catch (e) {}
+    shell.Run(cmd, 0, false);
+  }
+
+  // Asks one port whether the running server belongs to this Data folder.
+  function probe(port, done) {
+    var req;
+    try {
+      req = new ActiveXObject("MSXML2.ServerXMLHTTP.6.0");
+      req.setTimeouts(700, 700, 700, 700);
+      req.open("GET", "http://127.0.0.1:" + port + "/api/info?t=" + new Date().getTime(), true);
+      req.send();
+    } catch (e) {
+      done(false);
+      return;
+    }
+    var started = new Date().getTime();
+    (function check() {
+      var state = 0;
+      try { state = req.readyState; } catch (e) {}
+      if (state === 4) {
+        var ok = false;
+        try {
+          ok = req.status === 200 &&
+            req.getResponseHeader("X-Hebet-Project") === "1" &&
+            norm(req.responseText).indexOf(norm(dataDir)) >= 0;
+        } catch (e) {}
+        done(ok);
+        return;
+      }
+      if (new Date().getTime() - started > 1500) {
+        try { req.abort(); } catch (e) {}
+        done(false);
+        return;
+      }
+      setTimeout(check, 60);
+    })();
+  }
+
+  function probeAll(index, done) {
+    if (index >= PORTS.length) { done(false); return; }
+    probe(PORTS[index], function (ok) {
+      if (ok) done(true);
+      else probeAll(index + 1, done);
+    });
+  }
+
+  function waitForServer(deadline) {
+    probeAll(0, function (ok) {
+      if (ok) {
+        setStatus("הפרויקט נפתח בדפדפן");
+        setTimeout(function () { window.close(); }, 1400);
+        return;
+      }
+      if (new Date().getTime() > deadline) {
+        setStatus("הפרויקט לא נפתח. ודאו שיש גישה לתיקייה ונסו שוב.", true);
+        return;
+      }
+      setTimeout(function () { waitForServer(deadline); }, 300);
+    });
+  }
+
+  function launch() {
+    setStatus("פותח את הפרויקט");
+    try {
+      if (!fso.FileExists(dataDir + "\\hebet-server.ps1") || !fso.FileExists(dataDir + "\\index.html")) {
+        setStatus("התיקייה Data חסרה או לא שלמה ליד הקובץ הזה.", true);
+        return;
+      }
+      startServer();
+    } catch (e) {
+      setStatus("לא הצלחנו להפעיל את הפרויקט. " + (e.message || ""), true);
+      return;
+    }
+    waitForServer(new Date().getTime() + WAIT_MS);
+  }
+
+  window.onload = function () {
+    try {
+      fso = new ActiveXObject("Scripting.FileSystemObject");
+      shell = new ActiveXObject("WScript.Shell");
+      appDir = getAppDir();
+      dataDir = appDir + "\\Data";
+    } catch (e) {
+      setStatus("לא הצלחנו לקרוא את תיקיית הפרויקט.", true);
+      return;
+    }
+    $("retry").onclick = launch;
+    document.onkeydown = function () {
+      if (window.event && window.event.keyCode === 27) window.close();
+    };
+    setTimeout(launch, 250);
+  };
+</script>
+</body>
+</html>

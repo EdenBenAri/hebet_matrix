@@ -138,7 +138,7 @@ function Add-HebetHeaders([System.Net.HttpListenerResponse]$res) {
   $res.Headers["X-Hebet-Project"] = "1"
   $res.Headers["Access-Control-Allow-Origin"] = "*"
   $res.Headers["Access-Control-Allow-Methods"] = "GET, PUT, OPTIONS"
-  $res.Headers["Access-Control-Allow-Headers"] = "Content-Type"
+  $res.Headers["Access-Control-Allow-Headers"] = "Content-Type, X-Hebet-Root"
   $res.Headers["Access-Control-Expose-Headers"] = "X-Hebet-Project"
   $res.Headers["Access-Control-Allow-Private-Network"] = "true"
   $res.Headers["Cache-Control"] = "no-store"
@@ -202,6 +202,79 @@ function Test-HebetJson([string]$text) {
   $trim = $text.Trim()
   if ($trim.Length -lt 2 -or -not $trim.StartsWith("{") -or -not $trim.EndsWith("}")) { return $false }
   return ($trim.Contains('"soldiers"') -or $trim.Contains('"units"') -or $trim.Contains('"fresh"') -or $trim.Contains('"version"'))
+}
+
+$backupDir = Join-Path $root "backups"
+$dailyDir = Join-Path $backupDir "daily"
+$backupKeep = 60
+$dailyKeep = 120
+$script:lastBackup = [DateTime]::MinValue
+$indexFile = Join-Path $root "index.html"
+$script:indexStamp = [DateTime]::MinValue
+$script:indexVersion = ""
+
+function Get-DataVersion([string]$text) {
+  $m = [regex]::Match($text, '"version"\s*:\s*(\d+)')
+  if ($m.Success) { return [int]$m.Groups[1].Value }
+  return 1
+}
+
+function Get-AppVersionOf([string]$text) {
+  $m = [regex]::Match($text, '"appVersion"\s*:\s*"([^"]*)"')
+  if ($m.Success) { return $m.Groups[1].Value }
+  return ""
+}
+
+# Every soldier record carries a personalId key, so this counts soldiers cheaply.
+function Get-SoldierCount([string]$text) {
+  return ([regex]::Matches($text, '"personalId"\s*:')).Count
+}
+
+# APP_VERSION of the index.html that is installed on disk right now (cached by file time).
+function Get-InstalledAppVersion {
+  try {
+    $stamp = (Get-Item -LiteralPath $indexFile).LastWriteTimeUtc
+    if ($stamp -ne $script:indexStamp) {
+      $html = [System.IO.File]::ReadAllText($indexFile, $utf8)
+      $m = [regex]::Match($html, 'var APP_VERSION = "([^"]+)"')
+      $script:indexVersion = ""
+      if ($m.Success) { $script:indexVersion = $m.Groups[1].Value }
+      $script:indexStamp = $stamp
+    }
+  } catch {}
+  return $script:indexVersion
+}
+
+# Copies the current data file into backups\ before it is overwritten.
+# Runs on the first save of every server session, then at most once an hour,
+# and always (force) when soldiers are removed or the data version changes.
+# One copy per day is also kept in backups\daily for $dailyKeep days.
+function Backup-HebetData([string]$reason, [bool]$force) {
+  if (-not (Test-Path -LiteralPath $dataFile)) { return }
+  $now = Get-Date
+  try {
+    if (-not (Test-Path -LiteralPath $dailyDir)) { New-Item -ItemType Directory -Path $dailyDir -Force | Out-Null }
+    $daily = Join-Path $dailyDir ("hebet-data-" + $now.ToString("yyyyMMdd") + ".txt")
+    if (-not (Test-Path -LiteralPath $daily)) {
+      [System.IO.File]::Copy($dataFile, $daily, $false)
+      $oldDaily = Get-ChildItem -LiteralPath $dailyDir -Filter "hebet-data-*.txt" | Sort-Object Name -Descending | Select-Object -Skip $dailyKeep
+      foreach ($f in $oldDaily) { try { Remove-Item -LiteralPath $f.FullName -Force } catch {} }
+    }
+  } catch {
+    Write-Log ("daily backup failed: " + $_.Exception.Message)
+  }
+  if (-not $force -and ($now - $script:lastBackup).TotalMinutes -lt 60) { return }
+  try {
+    $name = "hebet-data-" + $now.ToString("yyyyMMdd-HHmmss-fff") + "-" + $reason + ".txt"
+    [System.IO.File]::Copy($dataFile, (Join-Path $backupDir $name), $true)
+    $script:lastBackup = $now
+    $old = Get-ChildItem -LiteralPath $backupDir -Filter "hebet-data-*.txt" | Sort-Object LastWriteTime -Descending | Select-Object -Skip $backupKeep
+    foreach ($f in $old) { try { Remove-Item -LiteralPath $f.FullName -Force } catch {} }
+  } catch {
+    Write-Log ("backup failed: " + $_.Exception.Message)
+    # Soldiers being removed or a migration: do not overwrite without a backup.
+    if ($force) { throw "backup failed" }
+  }
 }
 
 function Write-HebetData([string]$text) {
@@ -288,12 +361,43 @@ try {
             Send-Text $res 400 "text/plain; charset=utf-8" "invalid"
             continue
           }
+          # A page opened from another project folder (or left open from an earlier
+          # run on the same port) must not write into this folder's data file.
+          $claimedRoot = $req.Headers["X-Hebet-Root"]
+          if ($claimedRoot) {
+            $claimed = ""
+            try { $claimed = ConvertTo-HebetRoot ([System.Uri]::UnescapeDataString($claimedRoot)) } catch {}
+            if ($claimed -ne $wantedRoot) {
+              Write-Log ("rejected save from another project folder: " + $claimed)
+              Send-Text $res 409 "text/plain; charset=utf-8" "wrong-project"
+              continue
+            }
+          }
+          # A page left open from before an update must not save over data
+          # handled by the newly installed version. It is told to reload.
+          $installed = Get-InstalledAppVersion
+          if ($installed -and (Get-AppVersionOf $text) -ne $installed) {
+            Write-Log ("rejected save from outdated page " + (Get-AppVersionOf $text) + ", installed " + $installed)
+            Send-Text $res 409 "text/plain; charset=utf-8" "outdated"
+            continue
+          }
           $currentRev = -1
           $baseRev = -1
+          $currentVer = 0
+          $currentCount = 0
           if (Test-Path -LiteralPath $dataFile) {
             $currentText = Read-HebetData
             $currentMatch = [regex]::Match($currentText, '"revision"\s*:\s*(\d+)')
             if ($currentMatch.Success) { $currentRev = [int]$currentMatch.Groups[1].Value }
+            $currentVer = Get-DataVersion $currentText
+            $currentCount = Get-SoldierCount $currentText
+          }
+          $newCount = Get-SoldierCount $text
+          if ($currentCount -ge 3 -and $newCount -eq 0) {
+            # Wiping a full file in one save is never a normal action - keep the file.
+            Write-Log ("rejected save: would remove all " + $currentCount + " soldiers")
+            Send-Text $res 409 "text/plain; charset=utf-8" "empty"
+            continue
           }
           $baseMatch = [regex]::Match($text, '"baseRevision"\s*:\s*(\d+)')
           if ($baseMatch.Success) { $baseRev = [int]$baseMatch.Groups[1].Value }
@@ -301,6 +405,16 @@ try {
             Send-Text $res 409 "text/plain; charset=utf-8" "stale"
             continue
           }
+          $newVer = Get-DataVersion $text
+          if ($currentVer -gt $newVer) {
+            # An older app version must never overwrite data saved by a newer one.
+            Write-Log ("rejected save: data version " + $currentVer + " > incoming " + $newVer)
+            Send-Text $res 409 "text/plain; charset=utf-8" "stale"
+            continue
+          }
+          if ($currentVer -gt 0 -and $newVer -ne $currentVer) { Backup-HebetData ("v" + $currentVer + "-to-v" + $newVer) $true }
+          elseif ($newCount -lt $currentCount) { Backup-HebetData ("removed-" + ($currentCount - $newCount)) $true }
+          else { Backup-HebetData "auto" $false }
           Write-HebetData $text
           Send-Bytes $res 204 "" $null
         } catch {

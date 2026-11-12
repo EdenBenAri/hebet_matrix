@@ -5532,6 +5532,79 @@
     var fileRevision = 0;
     var fileBroken = false;
     var sawCorrupt = false;
+
+    // ===== גרסאות ומיגרציות =====
+    // APP_VERSION: גרסת התוכנה (לתצוגה בלבד).
+    // DATA_VERSION: גרסת מבנה הנתונים בקובץ hebet-data.txt.
+    // כשמוסיפים פיצ'ר שמשנה את מבנה הנתונים:
+    //   1. מעלים את DATA_VERSION ב-1.
+    //   2. מוסיפים ל-MIGRATIONS פונקציה במספר הגרסה החדש, שמקבלת את הנתונים הישנים
+    //      ומשלימה/ממירה אותם. לעולם לא מוחקים שדות קיימים - רק מוסיפים או ממירים.
+    // דוגמה:
+    //   2: function (data) {
+    //     data.soldiers.forEach(function (s) { if (s.rank == null) s.rank = ""; });
+    //   }
+    var APP_VERSION = "1.0.0";
+    var DATA_VERSION = 1;
+    var MIGRATIONS = {
+    };
+    // כשיש סיבה כלשהי לחשוש לנתונים - השמירה לקובץ נחסמת והמשתמש רואה הודעה.
+    // "too-new" | "migration" | "empty" | "outdated"
+    var saveBlock = "";
+    var SAVE_BLOCK_TEXT = {
+      "too-new": "קובץ הנתונים נשמר בגרסה חדשה יותר של המערכת. כדי לא לפגוע בנתונים, השמירה מושבתת במחשב הזה עד שהמערכת תעודכן.",
+      "migration": "עדכון מבנה הנתונים לגרסה החדשה נכשל. הנתונים בקובץ לא שונו, והשמירה מושבתת. פנו לתמיכה.",
+      "empty": "השמירה נחסמה כי היא הייתה מוחקת את כל החיילים מהקובץ. הנתונים בקובץ לא שונו. רעננו את הדף.",
+      "outdated": "המערכת עודכנה לגרסה חדשה. רעננו את הדף כדי להמשיך לעבוד ולשמור."
+    };
+    var RECORD_KNOWN_KEYS = ["version", "appVersion", "savedAt", "soldiers", "units", "unit", "revision", "baseRevision", "studySeen", "releaseSoonSeen", "noticeDismissed", "fresh"];
+
+    function blockSaving(reason) {
+      if (!saveBlock) saveBlock = reason;
+      savePending = false;
+      if (typeof renderSaveChrome === "function") renderSaveChrome();
+    }
+
+    function migrateRecord(data) {
+      var from = Number(data.version) || 1;
+      if (from > DATA_VERSION) {
+        blockSaving("too-new");
+        return data;
+      }
+      if (from === DATA_VERSION) {
+        if (!Array.isArray(data.soldiers)) data.soldiers = [];
+        if (!Array.isArray(data.units)) data.units = [];
+        return data;
+      }
+      // המיגרציה רצה על עותק. אם משהו נכשל באמצע - חוזרים לנתונים המקוריים וחוסמים שמירה.
+      var work;
+      try {
+        work = JSON.parse(JSON.stringify(data));
+        if (!Array.isArray(work.soldiers)) work.soldiers = [];
+        if (!Array.isArray(work.units)) work.units = [];
+        var before = work.soldiers.length;
+        for (var v = from + 1; v <= DATA_VERSION; v++) {
+          if (typeof MIGRATIONS[v] === "function") MIGRATIONS[v](work);
+          work.version = v;
+        }
+        if (!Array.isArray(work.soldiers) || work.soldiers.length < before) throw new Error("migration lost soldiers");
+      } catch (err) {
+        blockSaving("migration");
+        return data;
+      }
+      return work;
+    }
+
+    // מעתיק שדות שהגרסה הנוכחית לא מכירה, כדי שלא יימחקו בשמירה.
+    function carryExtras(item) {
+      var out = {};
+      if (!item || typeof item !== "object" || Array.isArray(item)) return out;
+      Object.keys(item).forEach(function (key) {
+        if (typeof item[key] !== "function") out[key] = item[key];
+      });
+      return out;
+    }
+
     var FIELDS = [
       { key: "profession", label: "מקצוע", required: true, options: PROFESSIONS },
       { key: "unit", label: "יחידה", required: true, unit: true },
@@ -6890,7 +6963,7 @@
     }
 
     function blankSoldier(item) {
-      var soldier = {};
+      var soldier = carryExtras(item);
       FIELDS.forEach(function (field) {
         if (field.check) {
           soldier[field.key] = isUntrained(item) ? "1" : "";
@@ -7051,9 +7124,24 @@
       }
     }
 
+    var lastFileSoldierCount = -1;
+
+    // מספר החיילים שבקובץ כרגע (לפי הטעינה או השמירה האחרונה).
+    function fileSoldierCount() {
+      if (lastFileSoldierCount >= 0) return lastFileSoldierCount;
+      if (fileRecord && !fileRecord.fresh && Array.isArray(fileRecord.soldiers)) return fileRecord.soldiers.length;
+      return 0;
+    }
+
+    // הגנה: שמירה שהייתה מרוקנת קובץ מלא בחיילים לא נשלחת.
+    function wouldWipeSoldiers() {
+      return fileSoldierCount() >= 3 && SOLDIERS.length === 0;
+    }
+
     function projectSnapshot() {
-      return {
-        version: 1,
+      var base = {
+        version: DATA_VERSION,
+        appVersion: APP_VERSION,
         savedAt: new Date().toISOString(),
         soldiers: SOLDIERS,
         units: UNITS,
@@ -7064,13 +7152,20 @@
         releaseSoonSeen: readList(RELEASE_SOON_SEEN_KEY),
         noticeDismissed: readList(NOTICE_DISMISS_KEY)
       };
+      // שדות עליונים שהגרסה הזו לא מכירה נשמרים כמו שהם, אחרי השדות המוכרים.
+      if (fileRecord && !fileRecord.fresh) {
+        Object.keys(fileRecord).forEach(function (key) {
+          if (RECORD_KNOWN_KEYS.indexOf(key) < 0 && !(key in base)) base[key] = fileRecord[key];
+        });
+      }
+      return base;
     }
 
     function normalizeRecord(data) {
       if (!data || typeof data !== "object" || Array.isArray(data)) return { fresh: true };
       if (data.fresh === true) return { fresh: true };
       if (!Array.isArray(data.soldiers) && !Array.isArray(data.units)) return { fresh: true };
-      return data;
+      return migrateRecord(data);
     }
 
     function storedRaw(fileKey, storageKey) {
@@ -7083,6 +7178,9 @@
     function adoptLocalIfFileHasNoSoldiers() {
       if (!projectFileActive || !fileRecord || fileRecord.fresh) return;
       if (Array.isArray(fileRecord.soldiers) && fileRecord.soldiers.length) return;
+      // קובץ שהמערכת כבר שמרה בו הוא המקור הקובע. רשימה ריקה בו היא מכוונת,
+      // ולא מחזירים אליו חיילים ישנים מזיכרון הדפדפן.
+      if (fileRecord.revision) return;
       var localSoldiers = readList(STORAGE_KEY);
       if (!localSoldiers.length) return;
       fileRecord.soldiers = localSoldiers;
@@ -7125,6 +7223,13 @@
       var connect = document.getElementById("save-connect");
       var pill = document.getElementById("save-pill");
       if (!note || !pill) return;
+      if (projectFileActive && saveBlock) {
+        pill.hidden = true;
+        note.hidden = false;
+        if (noteText) noteText.textContent = SAVE_BLOCK_TEXT[saveBlock] || SAVE_BLOCK_TEXT.migration;
+        if (connect) connect.hidden = true;
+        return;
+      }
       if (projectFileActive) {
         note.hidden = true;
         pill.hidden = false;
@@ -7142,7 +7247,7 @@
     }
 
     function queueProjectSave() {
-      if (!projectFileActive || fileBroken) return;
+      if (!projectFileActive || fileBroken || saveBlock) return;
       if (bootstrapping) return;
       savePending = true;
       pumpSave();
@@ -7161,10 +7266,21 @@
     function pumpSave() {
       if (saveRunning || !savePending) return;
       savePending = false;
+      if (saveBlock) return;
+      if (wouldWipeSoldiers()) {
+        blockSaving("empty");
+        return;
+      }
       saveRunning = true;
       setSaveStatus("saving");
       var body;
-      try { body = JSON.stringify(projectSnapshot()); }
+      var countAtSave = SOLDIERS.length;
+      var revisionAtSave = 0;
+      try {
+        var snapshot = projectSnapshot();
+        revisionAtSave = snapshot.revision;
+        body = JSON.stringify(snapshot);
+      }
       catch (err) {
         saveRunning = false;
         setSaveStatus("error");
@@ -7174,10 +7290,21 @@
       }
       writeBody(body).then(function () {
         saveRunning = false;
+        lastFileSoldierCount = countAtSave;
+        // הקובץ נמצא עכשיו בגרסה ששמרנו. בלי זה השמירה הבאה נדחתה כ"ישנה" והשינוי אבד.
+        if (revisionAtSave > fileRevision) fileRevision = revisionAtSave;
         if (savePending) pumpSave();
         else setSaveStatus("saved");
       }, function (err) {
         saveRunning = false;
+        if (err && err.message === "outdated") {
+          reloadForNewVersion();
+          return;
+        }
+        if (err && err.message === "empty") {
+          blockSaving("empty");
+          return;
+        }
         if (err && err.message === "stale") {
           refreshFromServer();
           return;
@@ -7193,10 +7320,16 @@
         if (fileMode === "server" && dataUrl) {
           return fetch(dataUrl, {
             method: "PUT",
-            headers: { "Content-Type": "application/json; charset=utf-8" },
+            headers: saveHeaders(),
             body: body
           }).then(function (res) {
-            if (res.status === 409) throw new Error("stale");
+            if (res.status === 409) {
+              return res.text().then(function (text) {
+                var why = String(text || "").trim();
+                if (why === "wrong-project") why = "outdated";
+                throw new Error(why === "outdated" || why === "empty" ? why : "stale");
+              }, function () { throw new Error("stale"); });
+            }
             if (!res.ok) throw new Error("save");
           });
         }
@@ -7205,7 +7338,7 @@
       }
       function attempt(left) {
         return once().catch(function (err) {
-          if (err && err.message === "stale") throw err;
+          if (err && (err.message === "stale" || err.message === "outdated" || err.message === "empty")) throw err;
           if (left <= 1) throw new Error("save");
           return new Promise(function (resolve) { setTimeout(resolve, 400); }).then(function () {
             return attempt(left - 1);
@@ -7213,6 +7346,20 @@
         });
       }
       return attempt(4);
+    }
+
+    // דף שנשאר פתוח מלפני עדכון גרסה: טוענים מחדש כדי לקבל את הגרסה החדשה.
+    // השינוי האחרון שלא נשמר יאבד, אבל הנתונים בקובץ לא נדרסים בקוד ישן.
+    function reloadForNewVersion() {
+      var last = 0;
+      try { last = Number(sessionStorage.getItem("hebet-version-reload")) || 0; } catch (err) {}
+      if (Date.now() - last < 15000) {
+        blockSaving("outdated");
+        return;
+      }
+      try { sessionStorage.setItem("hebet-version-reload", String(Date.now())); } catch (err) {}
+      blockSaving("outdated");
+      location.reload();
     }
 
     function refreshFromServer() {
@@ -7224,6 +7371,7 @@
         var data = normalizeRecord(JSON.parse(text));
         fileRecord = data;
         fileRevision = data && data.revision ? data.revision : 0;
+        lastFileSoldierCount = data && Array.isArray(data.soldiers) ? data.soldiers.length : 0;
         if (data && Array.isArray(data.soldiers)) SOLDIERS = data.soldiers.map(blankSoldier);
         if (data && Array.isArray(data.units) && data.units.length) {
           var next = [];
@@ -7246,11 +7394,12 @@
     }
 
     function flushProjectSave() {
-      if (!projectFileActive || fileBroken || fileMode !== "server" || !dataUrl) return;
+      if (!projectFileActive || fileBroken || saveBlock || fileMode !== "server" || !dataUrl) return;
+      if (wouldWipeSoldiers()) return;
       try {
         fetch(dataUrl, {
           method: "PUT",
-          headers: { "Content-Type": "application/json; charset=utf-8" },
+          headers: saveHeaders(),
           body: JSON.stringify(projectSnapshot()),
           keepalive: true
         });
@@ -7288,10 +7437,31 @@
       });
     }
 
+    // תיקיית הפרויקט שהשרת דיווח עליה בזמן הטעינה. נשלחת עם כל שמירה, כדי שדף
+    // שנפתח מתיקייה אחרת (או נשאר פתוח מהפעלה קודמת) לא ישמור לקובץ הלא נכון.
+    var serverRoot = "";
+
+    function saveHeaders() {
+      var headers = { "Content-Type": "application/json; charset=utf-8" };
+      if (serverRoot) headers["X-Hebet-Root"] = encodeURIComponent(serverRoot);
+      return headers;
+    }
+
+    function learnServerRoot() {
+      return fetch("/api/info", { cache: "no-store" }).then(function (res) {
+        return res.ok ? res.json() : null;
+      }).then(function (info) {
+        if (info && info.root) serverRoot = String(info.root);
+      }).catch(function () {});
+    }
+
     function tryServer() {
       var urls = [];
       if (location.protocol === "http:" || location.protocol === "https:") urls.push("/api/data");
-      return tryServerUrl(urls, 0);
+      return tryServerUrl(urls, 0).then(function (found) {
+        if (!found) return found;
+        return learnServerRoot().then(function () { return found; });
+      });
     }
 
     function idbOpen() {
@@ -7609,10 +7779,9 @@
     }
 
     function normalizeUnit(item) {
-      var unit = {
-        id: clean(item && item.id),
-        name: clean(item && item.name)
-      };
+      var unit = carryExtras(item);
+      unit.id = clean(item && item.id);
+      unit.name = clean(item && item.name);
       UNIT_PARAMS.forEach(function (key) {
         unit[key] = clean(item && item[key]);
       });
