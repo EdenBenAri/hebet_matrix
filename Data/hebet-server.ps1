@@ -21,6 +21,7 @@ function Get-InfoJson {
     root = $root
     dataFile = $dataFile
     exists = [bool]$exists
+    pid = $PID
   }
   return ($obj | ConvertTo-Json -Compress)
 }
@@ -324,8 +325,9 @@ function Read-RequestText([System.Net.HttpListenerRequest]$req) {
   return $utf8.GetString($ms.ToArray())
 }
 
+$stopRequested = $false
 try {
-  while ($listener.IsListening) {
+  while ($listener.IsListening -and -not $stopRequested) {
     $ctx = $null
     try {
       $ctx = $listener.GetContext()
@@ -346,6 +348,22 @@ try {
 
       if ($path -eq "/api/info" -and $req.HttpMethod -eq "GET") {
         Send-Text $res 200 "application/json; charset=utf-8" (Get-InfoJson)
+        continue
+      }
+
+      # Used by the version update. Only the folder this server is saving for can stop it.
+      if ($path -eq "/api/shutdown" -and $req.HttpMethod -eq "POST") {
+        $claimedRoot = $req.Headers["X-Hebet-Root"]
+        $claimed = ""
+        if ($claimedRoot) {
+          try { $claimed = ConvertTo-HebetRoot ([System.Uri]::UnescapeDataString($claimedRoot)) } catch {}
+        }
+        if ($claimed -ne $wantedRoot) {
+          Send-Text $res 409 "text/plain; charset=utf-8" "wrong-project"
+          continue
+        }
+        Send-Bytes $res 204 "" $null
+        $stopRequested = $true
         continue
       }
 

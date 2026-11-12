@@ -660,6 +660,519 @@
       font-weight: 600;
     }
 
+    .units-board-head:has(.stats-toggle) {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .units-board-head-copy { min-width: 0; }
+
+    .units-stage {
+      min-width: 0;
+      display: flex;
+      align-items: flex-start;
+      container-type: inline-size;
+    }
+
+    .units-stage-main { flex: 1 1 auto; min-width: 0; }
+
+    .stats-toggle {
+      flex: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      height: 40px;
+      margin-top: 2px;
+      padding: 0 12px 0 14px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+      font-size: 0.95rem;
+      font-weight: 800;
+      box-shadow: var(--shadow);
+      cursor: pointer;
+    }
+
+    .stats-toggle:hover {
+      color: var(--blue);
+      border-color: #b9d4f5;
+    }
+
+    .stats-toggle:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--blue);
+    }
+
+    .stats-toggle[aria-expanded="true"] {
+      background: var(--blue);
+      border-color: var(--blue);
+      color: #fff;
+    }
+
+    .stats-toggle-icon {
+      display: inline-flex;
+      transform: rotate(180deg);
+      transition: transform 220ms ease;
+    }
+
+    .stats-toggle[aria-expanded="true"] .stats-toggle-icon { transform: none; }
+
+    .units-stats {
+      flex: 0 0 auto;
+      width: 0;
+      margin-inline-start: 0;
+      min-width: 0;
+      overflow: hidden;
+      pointer-events: none;
+      transition: width 680ms cubic-bezier(0.22, 1, 0.36, 1), margin-inline-start 680ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .units-stage.is-stats .units-stats {
+      width: calc((100% - 16px) * 0.3);
+      margin-inline-start: 16px;
+      pointer-events: auto;
+    }
+
+    .units-stats-inner {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: calc((100cqw - 16px) * 0.3);
+      min-width: 0;
+      opacity: 0;
+      transform: translateX(-18px) scale(0.98);
+      transform-origin: left center;
+      transition: opacity 320ms ease, transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .units-stage.is-stats .units-stats-inner {
+      opacity: 1;
+      transform: none;
+      transition: opacity 520ms ease 90ms, transform 680ms cubic-bezier(0.22, 1, 0.36, 1) 40ms;
+    }
+
+    .units-stats-inner h3 {
+      margin: 0;
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    .units-stats-lead,
+    .pie-mode-note,
+    .arm-sum-note {
+      margin: 0;
+      color: var(--secondary);
+      font-size: 0.78rem;
+      font-weight: 700;
+      line-height: 1.45;
+    }
+
+    .arm-sum {
+      padding: 14px 14px 8px;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: var(--shadow-card);
+    }
+
+    .arm-sum-kicker {
+      display: block;
+      color: var(--secondary);
+      font-size: 0.74rem;
+      font-weight: 800;
+    }
+
+    .arm-sum-total {
+      display: block;
+      margin-top: 2px;
+      font-size: 2.15rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1;
+    }
+
+    .arm-sum-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 12px;
+    }
+
+    .arm-pill {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 4px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: #f3f6fb;
+      font-size: 0.76rem;
+      font-weight: 800;
+    }
+
+    .arm-pill b { font-variant-numeric: tabular-nums; }
+    .arm-pill.is-short { background: #fbf4ea; color: #9a5b12; }
+    .arm-pill.is-over { background: #f4f0fb; color: #6941c6; }
+
+    .arm-sum-note { margin-top: 8px; font-size: 0.72rem; }
+
+    .arm-sum-label {
+      margin: 12px 0 0;
+      font-size: 0.78rem;
+      font-weight: 800;
+    }
+
+    .arm-gaps {
+      list-style: none;
+      margin: 6px 0 0;
+      padding: 0;
+    }
+
+    .arm-gap {
+      display: grid;
+      grid-template-columns: 10px minmax(0, 1fr) auto auto;
+      gap: 6px;
+      align-items: center;
+      padding: 6px 0;
+      border-top: 1px solid #eef1f5;
+      font-size: 0.76rem;
+      font-weight: 800;
+    }
+
+    .arm-gap i {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .arm-gap-name {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .arm-gap-status { white-space: nowrap; }
+    .arm-gap-status.is-short { color: #9a5b12; }
+    .arm-gap-status.is-full { color: #087443; }
+    .arm-gap-status.is-over { color: #6941c6; }
+    .arm-gap-status.is-empty { color: #98a2b3; }
+
+    .arm-gap-ratio {
+      color: #98a2b3;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    .arm-gap-ratio b { color: var(--ink); }
+
+    .pie-mode {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      padding: 3px;
+      border-radius: 999px;
+      background: #e8eef5;
+    }
+
+    .pie-mode-thumb {
+      position: absolute;
+      z-index: 0;
+      top: 3px;
+      bottom: 3px;
+      width: calc(50% - 3px);
+      border-radius: 999px;
+      background: #fff;
+      box-shadow: 0 1px 2px rgba(16, 24, 40, 0.08), 0 4px 12px rgba(16, 24, 40, 0.06);
+      inset-inline-start: 3px;
+      transition: inset-inline-start 560ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .pie-mode.is-actual .pie-mode-thumb { inset-inline-start: 50%; }
+
+    .pie-mode button {
+      position: relative;
+      z-index: 1;
+      height: 32px;
+      border: 0;
+      border-radius: 999px;
+      background: transparent;
+      color: #667085;
+      font-size: 0.8rem;
+      font-weight: 800;
+    }
+
+    .pie-mode button[aria-pressed="true"] { color: var(--ink); }
+
+    .pie-key[hidden] { display: none; }
+
+    .pie-key {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 14px;
+      margin: 0;
+      color: var(--secondary);
+      font-size: 0.74rem;
+      font-weight: 800;
+    }
+
+    .pie-key i {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      margin-inline-end: 5px;
+      border-radius: 3px;
+      vertical-align: -1px;
+    }
+
+    .pie-key-solid { background: var(--blue); }
+    .pie-key-pale { background: #d5e4f8; }
+
+    .pie-card {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 0;
+      padding: 14px 14px 10px;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: var(--shadow-card);
+    }
+
+    .pie-card-head { min-width: 0; }
+
+    .pie-card-head h3 {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 800;
+    }
+
+    .pie-card-head p {
+      margin: 2px 0 0;
+      color: var(--secondary);
+      font-size: 0.76rem;
+      font-weight: 700;
+    }
+
+    .pie-chart {
+      position: relative;
+      width: 176px;
+      height: 176px;
+      margin: 2px auto 4px;
+    }
+
+    .pie-chart svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+      transition: opacity 320ms ease;
+    }
+
+    .pie-chart.is-empty svg { opacity: 0; }
+
+    .pie-chart .pie-empty-note {
+      position: absolute;
+      inset: 42px 16px;
+      display: grid;
+      place-items: center;
+      margin: 0;
+      opacity: 0;
+      pointer-events: none;
+      text-align: center;
+      transition: opacity 320ms ease;
+    }
+
+    .pie-chart .pie-empty-note[hidden] { display: none; }
+    .pie-chart.is-empty .pie-empty-note { opacity: 1; }
+
+    .pie-legend.is-swap { animation: pie-list-in 480ms cubic-bezier(0.22, 1, 0.36, 1); }
+
+    @keyframes pie-list-in {
+      from { opacity: 0.4; transform: translateY(4px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    .pie-row.is-dim { opacity: 0.42; }
+    .pie-slice.is-off { pointer-events: none; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .pie-mode-thumb,
+      .pie-chart svg,
+      .pie-chart .pie-empty-note,
+      .units-stage,
+      .units-stats,
+      .units-stats-inner { transition: none; }
+      .pie-legend.is-swap { animation: none; }
+      .units-stats-inner { transform: none; }
+    }
+
+    .pie-center-num {
+      font-size: 11px;
+      font-weight: 800;
+      fill: var(--ink);
+      pointer-events: none;
+    }
+
+    .pie-center-sub {
+      font-size: 5.2px;
+      font-weight: 700;
+      fill: var(--secondary);
+      pointer-events: none;
+    }
+
+    .pie-slice-label {
+      font-size: 5px;
+      font-weight: 800;
+      fill: #1a1d21;
+      stroke: #fff;
+      stroke-width: 1.5px;
+      paint-order: stroke;
+      pointer-events: none;
+    }
+
+    .pie-slice { cursor: pointer; }
+    .pie-slice.is-hot { filter: brightness(0.9); }
+
+    .pie-tip {
+      position: fixed;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 12px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+      box-shadow: 0 10px 28px rgba(16, 24, 40, 0.16);
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    .pie-tip[hidden] { display: none; }
+
+    .pie-tip i {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--pie, #98a2b3);
+      flex: 0 0 auto;
+    }
+
+    .pie-tip b {
+      color: var(--ink);
+      font-size: 0.86rem;
+      font-weight: 800;
+    }
+
+    .pie-tip span {
+      color: var(--secondary);
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .pie-legend {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      min-width: 0;
+    }
+
+    .pie-sep {
+      margin: 6px 0 2px;
+      color: var(--secondary);
+      font-size: 0.72rem;
+      font-weight: 800;
+    }
+
+    .pie-row {
+      display: grid;
+      grid-template-columns: 12px minmax(0, 1fr) auto;
+      gap: 3px 6px;
+      align-items: center;
+      padding: 4px 2px;
+      border-radius: 8px;
+    }
+
+    .pie-row { cursor: pointer; }
+    .pie-row:hover,
+    .pie-row.is-hot { background: #f3f6fb; }
+
+    .pie-swatch {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--pie);
+      box-shadow: inset 0 0 0 1px rgba(16, 24, 40, 0.08);
+    }
+
+    .pie-name {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 0.78rem;
+      font-weight: 800;
+    }
+
+    .pie-ratio {
+      font-size: 0.75rem;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .pie-ratio span { color: #98a2b3; font-weight: 700; }
+    .pie-ratio small {
+      margin-inline-start: 4px;
+      color: #98a2b3;
+      font-size: 0.68rem;
+      font-weight: 800;
+    }
+    .pie-ratio.is-empty { color: #98a2b3; }
+    .pie-ratio.is-short b { color: #9a5b12; }
+    .pie-ratio.is-full b { color: #087443; }
+    .pie-ratio.is-over b { color: #6941c6; }
+
+    .pie-meter {
+      grid-column: 2 / -1;
+      height: 6px;
+      border-radius: 99px;
+      background: #e6ebf2;
+      overflow: hidden;
+    }
+
+    .pie-meter > span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: var(--pie);
+    }
+
+    .pie-outside,
+    .pie-empty-note {
+      grid-column: 1 / -1;
+      margin: 0;
+      color: var(--secondary);
+      font-size: 0.74rem;
+      font-weight: 700;
+      line-height: 1.4;
+    }
+
+    .pie-chart-empty {
+      display: grid;
+      place-items: center;
+    }
+
+    .pie-chart-empty p {
+      margin: 8px 0 0;
+      color: var(--secondary);
+      font-size: 0.74rem;
+      font-weight: 700;
+      text-align: center;
+    }
+
     .intake-board { margin: 0 0 22px; }
 
     .intake-toggle {
@@ -805,6 +1318,83 @@
     .unit-tile.is-drop {
       transform: translateY(-3px);
       box-shadow: 0 0 0 3px rgba(0, 100, 224, 0.35), 0 16px 34px rgba(16, 24, 40, 0.12);
+    }
+
+    .assign-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 34;
+      background: rgba(16, 24, 40, 0.42);
+      pointer-events: none;
+      animation: assign-fade 220ms ease;
+    }
+
+    .assign-hint {
+      position: fixed;
+      z-index: 37;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 7px 16px;
+      border-radius: 999px;
+      background: #fff;
+      color: var(--ink);
+      font-size: 0.95rem;
+      font-weight: 800;
+      box-shadow: 0 10px 28px rgba(16, 24, 40, 0.18);
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    .unit-grid.is-assign-mode {
+      grid-template-columns: repeat(var(--fit-cols), var(--fit-w));
+      grid-auto-rows: var(--fit-h);
+      gap: 10px;
+      justify-content: start;
+      align-content: start;
+      align-items: start;
+      margin: 0;
+      padding: 0;
+      overflow: visible;
+      background: transparent;
+    }
+
+    .unit-grid.is-assign-mode > .unit-tile-add { display: none; }
+
+    .unit-grid.is-assign-mode > .unit-tile:not(.is-editing) {
+      width: var(--fit-base-w);
+      height: var(--fit-base-h);
+      min-width: 0;
+      min-height: 0;
+      max-width: none;
+      margin: 0;
+      margin-right: calc(var(--fit-w) - var(--fit-base-w));
+      margin-bottom: calc(var(--fit-h) - var(--fit-base-h));
+      transform: scale(var(--fit-zoom));
+      transform-origin: 0 0;
+      justify-self: start;
+      align-self: start;
+    }
+
+    .unit-grid.is-assign-mode .unit-tile:has(.unit-tile-open:hover) {
+      transform: scale(var(--fit-zoom));
+      box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 8px 22px rgba(16, 24, 40, 0.05);
+    }
+
+    .unit-grid.is-assign-mode > .unit-tile.is-drop,
+    .unit-grid.is-assign-mode > .unit-tile.is-drop:has(.unit-tile-open:hover) {
+      outline: 3px solid #0064e0;
+      outline-offset: 3px;
+      transform: translateY(-4px) scale(var(--fit-zoom));
+      box-shadow: 0 0 0 6px rgba(0, 100, 224, 0.22), 0 16px 34px rgba(16, 24, 40, 0.16);
+    }
+
+    .unit-grid.is-assign-mode .unit-tile-open .unit-tile-name {
+      font-size: 1.5rem;
+    }
+
+    @keyframes assign-fade {
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
 
     .fresh-copy {
@@ -1146,18 +1736,18 @@
       padding: 4px 8px 4px 4px;
       border: none;
       border-radius: 10px;
-      background: transparent;
-      color: var(--blue);
+      background: var(--blue);
+      color: #fff;
       font-size: 0.95rem;
       font-weight: 800;
       line-height: 1.2;
     }
 
-    .back-units:hover { background: #d4e6ff; }
+    .back-units:hover { background: var(--blue-hover); }
 
     .back-units:focus-visible {
       outline: none;
-      box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--blue);
+      box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--blue-deep);
     }
 
     .unit-bar-row {
@@ -3171,10 +3761,103 @@
       margin: 0 0 12px;
       padding: 8px 12px;
       border: none;
-      background: var(--surface);
+      background: var(--blue);
+      color: #fff;
       border-radius: 999px;
       font-weight: 800;
-      box-shadow: var(--shadow);
+      box-shadow: 0 1px 2px rgba(0, 70, 160, 0.22), 0 6px 16px rgba(0, 100, 224, 0.28);
+    }
+
+    /* ===== כפתור חזרה אחיד =====
+       כפתור כחול מלא (בולט על הרקע הלבן), יעד לחיצה של 40px לפחות,
+       שם היעד בטקסט, חץ ימינה (= אחורה בעברית) בעיגול לבן שזז מעט במעבר עכבר. */
+    .nav-back {
+      align-items: center;
+      gap: 8px;
+      min-height: 40px;
+      padding: 0 6px 0 14px;
+      border: 1px solid var(--blue);
+      border-radius: 999px;
+      background: var(--blue);
+      color: #fff;
+      font-size: 0.95rem;
+      font-weight: 800;
+      line-height: 1.2;
+      box-shadow: 0 1px 2px rgba(0, 70, 160, 0.22), 0 6px 16px rgba(0, 100, 224, 0.28);
+      cursor: pointer;
+      transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
+    }
+
+    .nav-back:not(.back-btn) { display: inline-flex; }
+
+    .nav-back-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: none;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #fff;
+      color: var(--blue);
+      transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+    }
+
+    .nav-back-icon svg { display: block; }
+
+    .nav-back-label { white-space: nowrap; }
+
+    .nav-back-key {
+      margin-inline-start: 2px;
+      padding: 2px 6px;
+      border: 1px solid rgba(255, 255, 255, 0.45);
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.18);
+      color: #fff;
+      font-family: inherit;
+      font-size: 0.72rem;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .nav-back:hover {
+      border-color: var(--blue-hover);
+      background: var(--blue-hover);
+      box-shadow: 0 2px 6px rgba(0, 70, 160, 0.28), 0 8px 18px rgba(0, 100, 224, 0.34);
+    }
+
+    .nav-back:hover .nav-back-icon {
+      background: #fff;
+      color: var(--blue-hover);
+      transform: translateX(2px);
+    }
+
+    .nav-back:active { transform: scale(0.98); }
+
+    .nav-back:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--blue-deep);
+    }
+
+    .nav-back.nav-back-sm {
+      min-height: 32px;
+      gap: 4px;
+      padding: 0 4px 0 10px;
+      font-size: 0.85rem;
+      box-shadow: none;
+    }
+
+    .nav-back.nav-back-sm .nav-back-icon { width: 22px; height: 22px; }
+
+    .log-head .nav-back { margin-bottom: 14px; }
+
+    @media (max-width: 860px) {
+      .nav-back-key { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .nav-back, .nav-back-icon { transition: none; }
+      .nav-back:hover .nav-back-icon, .nav-back:active { transform: none; }
     }
 
     .dossier { container-type: inline-size; container-name: dossier; }
@@ -5196,6 +5879,7 @@
     </section>
   </div>
   <div class="hit-pop" id="hit-pop" role="tooltip" hidden></div>
+  <div class="pie-tip" id="pie-tip" role="tooltip" hidden><i></i><b></b><span></span></div>
   <div class="print-root" id="print-root" aria-hidden="true"></div>
   <noscript><p style="padding:24px">כדי לראות את הרשימה צריך להפעיל JavaScript.</p></noscript>
 
@@ -5637,6 +6321,8 @@
       unitError: "",
       colorUnit: "",
       unitsHome: true,
+      statsOpen: false,
+      statsPie: "quota",
       shalishutOpen: false,
       editingShalishut: false,
       shalishutDraft: null,
@@ -5912,6 +6598,28 @@
 
     function svg(name, size) {
       return '<svg viewBox="0 0 24 24" width="' + (size || 20) + '" height="' + (size || 20) + '" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + (ICONS[name] || "") + "</svg>";
+    }
+
+    // כפתור חזרה אחיד בכל המערכת. label = לאן חוזרים ("חזרה לכל היחידות").
+    // opts.cls - מחלקות נוספות, opts.esc - להציג רמז Esc, opts.small - גרסה קומפקטית.
+    function navBack(action, label, opts) {
+      opts = opts || {};
+      var cls = "nav-back" + (opts.small ? " nav-back-sm" : "") + (opts.cls ? " " + opts.cls : "");
+      var title = label + (opts.esc ? " (Esc)" : "");
+      return '<button class="' + cls + '" type="button" data-action="' + action + '" title="' + esc(title) + '"' +
+        (opts.aria ? ' aria-label="' + esc(opts.aria) + '"' : "") + ">" +
+        '<span class="nav-back-icon">' + svg("chevron", opts.small ? 14 : 16) + "</span>" +
+        '<span class="nav-back-label">' + esc(label) + "</span>" +
+        (opts.esc ? '<kbd class="nav-back-key" aria-hidden="true">Esc</kbd>' : "") +
+        "</button>";
+    }
+
+    // לאן מוביל כפתור החזרה של היומן - המסך שהיה פתוח מתחתיו.
+    function logBackLabel() {
+      if (state.unitsHome) return "חזרה לכל היחידות";
+      if (state.outsideOpen) return "חזרה לחיילים ללא יחידה";
+      var name = unitName(state.unit);
+      return name ? "חזרה ל" + name : "חזרה";
     }
 
     function highlight(text, query) {
@@ -6365,7 +7073,7 @@
       }
 
       var back = opts.back
-        ? '<button class="back-btn" type="button" data-action="back">' + svg("chevron", 18) + "<span>כל החיילים</span></button>"
+        ? navBack("back", "חזרה לכל החיילים", { cls: "back-btn" })
         : "";
       var nameId = opts.selected ? ' id="profile-name"' : "";
       var soldierKey = keyOf(soldier);
@@ -8174,7 +8882,7 @@
           "</div></fieldset>";
       }).join("");
       var back = opts.back
-        ? '<button class="back-btn" type="button" data-action="back">' + svg("chevron", 18) + "<span>כל החיילים</span></button>"
+        ? navBack("back", "חזרה לכל החיילים", { cls: "back-btn" })
         : "";
       var color = unitColor(unit);
       return back +
@@ -8198,7 +8906,7 @@
 
     function renderShalishutCard(unit, opts) {
       var back = opts.back
-        ? '<button class="back-btn" type="button" data-action="back">' + svg("chevron", 18) + "<span>כל החיילים</span></button>"
+        ? navBack("back", "חזרה לכל החיילים", { cls: "back-btn" })
         : "";
       var color = unitColor(unit);
       return back +
@@ -8550,6 +9258,10 @@
       { key: "external", label: "יעד" }
     ];
     var hitPopUnit = "";
+    var pieTipNode = null;
+    var pieAnimToken = 0;
+    var pieAnimWeights = null;
+    var pieAnimFills = null;
     var hitPopTimer = 0;
     var hitPointer = { x: 0, y: 0, ready: false };
 
@@ -8636,6 +9348,52 @@
       pop.style.removeProperty("width");
       hitPopUnit = "";
       clearHitDesc();
+    }
+
+    function clearPieHot() {
+      var hot = document.querySelectorAll(".pie-slice.is-hot, .pie-row.is-hot");
+      for (var i = 0; i < hot.length; i++) hot[i].classList.remove("is-hot");
+    }
+
+    function hidePieTip() {
+      var tip = document.getElementById("pie-tip");
+      if (tip) tip.hidden = true;
+      pieTipNode = null;
+      clearPieHot();
+    }
+
+    function placePieTip(event) {
+      var tip = document.getElementById("pie-tip");
+      if (!tip || tip.hidden) return;
+      var width = tip.offsetWidth;
+      var height = tip.offsetHeight;
+      var left = event.clientX - width / 2;
+      var top = event.clientY - height - 14;
+      if (left < 8) left = 8;
+      if (left + width > window.innerWidth - 8) left = window.innerWidth - 8 - width;
+      if (top < 8) top = event.clientY + 18;
+      tip.style.left = left + "px";
+      tip.style.top = top + "px";
+    }
+
+    function showPieTip(node, event) {
+      var tip = document.getElementById("pie-tip");
+      if (!tip || !node) return;
+      var id = node.getAttribute("data-unit") || "";
+      var card = node.closest(".pie-card");
+      clearPieHot();
+      if (card && id) {
+        var marks = card.querySelectorAll(".pie-slice, .pie-row");
+        for (var i = 0; i < marks.length; i++) {
+          if (marks[i].getAttribute("data-unit") === id) marks[i].classList.add("is-hot");
+        }
+      }
+      tip.style.setProperty("--pie", node.getAttribute("data-color") || "#98a2b3");
+      tip.querySelector("b").textContent = node.getAttribute("data-name") || "";
+      tip.querySelector("span").textContent = node.getAttribute("data-detail") || "";
+      tip.hidden = false;
+      pieTipNode = node;
+      placePieTip(event);
     }
 
     function placeHitPop(anchor) {
@@ -9009,6 +9767,233 @@
 
     var freshDragKey = "";
     var suppressFreshClick = false;
+    var assignOverview = null;
+    var assignGeneration = 0;
+
+    function clearTileMotion(tile) {
+      tile.style.animation = "";
+      tile.style.transition = "";
+      tile.style.transform = "";
+      tile.style.transformOrigin = "";
+    }
+
+    function assignTilesOf(grid) {
+      var tiles = [];
+      var baseW = 0;
+      var baseH = 0;
+      var nodes = grid.children;
+      for (var i = 0; i < nodes.length; i++) {
+        var node = nodes[i];
+        if (node.classList.contains("is-editing")) return null;
+        if (!node.classList.contains("unit-tile") || node.classList.contains("is-quiet")) continue;
+        tiles.push(node);
+        if (node.offsetWidth > baseW) baseW = node.offsetWidth;
+        if (node.offsetHeight > baseH) baseH = node.offsetHeight;
+      }
+      if (!tiles.length || !baseW || !baseH) return null;
+      return { tiles: tiles, baseW: baseW, baseH: baseH };
+    }
+
+    function assignFits(rect, view) {
+      return rect.width > 0 && rect.height > 0 &&
+        rect.top >= view.top - 4 && rect.bottom <= view.bottom + 4 &&
+        rect.left >= view.left - 4 && rect.right <= view.right + 4;
+    }
+
+    function removeAssignChrome(state) {
+      if (state.backdrop && state.backdrop.parentNode) state.backdrop.remove();
+      if (state.hint && state.hint.parentNode) state.hint.remove();
+      document.body.classList.remove("is-assigning");
+    }
+
+    function restoreAssignGrid(state) {
+      var grid = state.grid;
+      if (!grid) return;
+      grid.classList.remove("is-assign-mode");
+      ["position", "left", "top", "width", "height", "margin", "zIndex"].forEach(function (prop) {
+        grid.style[prop] = "";
+      });
+      ["--fit-zoom", "--fit-cols", "--fit-w", "--fit-h", "--fit-base-w", "--fit-base-h"].forEach(function (prop) {
+        grid.style.removeProperty(prop);
+      });
+      if (state.spacer && state.spacer.parentNode) state.spacer.remove();
+    }
+
+    function releaseAssignOverview() {
+      var state = assignOverview;
+      if (!state) return;
+      assignGeneration += 1;
+      assignOverview = null;
+      if (state.grid && state.grid.isConnected) {
+        for (var i = 0; i < state.tiles.length; i++) {
+          if (state.tiles[i].isConnected) clearTileMotion(state.tiles[i]);
+        }
+        restoreAssignGrid(state);
+      }
+      removeAssignChrome(state);
+    }
+
+    function settleAssignTiles(tiles, generation) {
+      window.setTimeout(function () {
+        if (generation !== assignGeneration) return;
+        for (var i = 0; i < tiles.length; i++) {
+          if (tiles[i].isConnected) clearTileMotion(tiles[i]);
+        }
+      }, 420);
+    }
+
+    function flyTiles(tiles, fromRects, endScale, baseW) {
+      endScale = endScale || 1;
+      for (var i = 0; i < tiles.length; i++) {
+        var from = fromRects[i];
+        var tile = tiles[i];
+        if (!from || !from.width || !tile.isConnected) continue;
+        var last = tile.getBoundingClientRect();
+        if (!last.width || !last.height) continue;
+        var localW = baseW || last.width;
+        var sx = from.width / localW;
+        var dx = from.left - last.left;
+        var dy = from.top - last.top;
+        tile.style.transition = "none";
+        tile.style.transformOrigin = "0 0";
+        tile.style.transform = "translate(" + dx + "px," + dy + "px) scale(" + sx + ")";
+      }
+      if (tiles[0]) void tiles[0].offsetWidth;
+      var end = endScale === 1 ? "none" : "scale(" + endScale + ")";
+      for (var j = 0; j < tiles.length; j++) {
+        if (!tiles[j].isConnected) continue;
+        tiles[j].style.transition = "transform 420ms cubic-bezier(0.22, 1, 0.36, 1)";
+        tiles[j].style.transform = end;
+      }
+    }
+
+    function beginAssignOverview() {
+      if (assignOverview || !state.unitsHome) return;
+      var grid = document.querySelector("#units-board .unit-grid");
+      var scroller = document.getElementById("profile");
+      if (!grid || !scroller) return;
+      var measured = assignTilesOf(grid);
+      if (!measured) return;
+      var tiles = measured.tiles;
+      var view = scroller.getBoundingClientRect();
+      var union = tiles[0].getBoundingClientRect();
+      var topEdge = union.top;
+      var bottomEdge = union.bottom;
+      var leftEdge = union.left;
+      var rightEdge = union.right;
+      for (var u = 1; u < tiles.length; u++) {
+        var rect = tiles[u].getBoundingClientRect();
+        if (rect.top < topEdge) topEdge = rect.top;
+        if (rect.bottom > bottomEdge) bottomEdge = rect.bottom;
+        if (rect.left < leftEdge) leftEdge = rect.left;
+        if (rect.right > rightEdge) rightEdge = rect.right;
+      }
+      if (assignFits({ top: topEdge, bottom: bottomEdge, left: leftEdge, right: rightEdge, width: rightEdge - leftEdge, height: bottomEdge - topEdge }, view)) return;
+      var padX = 28;
+      var padY = 18;
+      var hintH = 52;
+      var availW = Math.max(160, view.width - padX * 2);
+      var availH = Math.max(120, view.height - padY * 2 - hintH);
+      var gap = 10;
+      var best = null;
+      for (var cols = 1; cols <= tiles.length; cols++) {
+        var rows = Math.ceil(tiles.length / cols);
+        var zoomW = (availW - gap * (cols - 1)) / cols / measured.baseW;
+        var zoomH = (availH - gap * (rows - 1)) / rows / measured.baseH;
+        var zoomTry = Math.min(zoomW, zoomH);
+        if (zoomTry > 1) zoomTry = 1;
+        if (!best || zoomTry > best.zoom) best = { cols: cols, rows: rows, zoom: zoomTry };
+      }
+      var zoom = best.zoom;
+      var cellW = measured.baseW * zoom;
+      var cellH = measured.baseH * zoom;
+      var gridW = best.cols * cellW + gap * (best.cols - 1);
+      var gridH = best.rows * cellH + gap * (best.rows - 1);
+      if (gridW > availW || gridH > availH) {
+        zoom *= Math.min(availW / gridW, availH / gridH);
+        cellW = measured.baseW * zoom;
+        cellH = measured.baseH * zoom;
+        gridW = best.cols * cellW + gap * (best.cols - 1);
+        gridH = best.rows * cellH + gap * (best.rows - 1);
+      }
+      var fromRects = [];
+      for (var f = 0; f < tiles.length; f++) fromRects.push(tiles[f].getBoundingClientRect());
+      var placeHeight = grid.offsetHeight;
+      var left = view.left + (view.width - gridW) / 2;
+      var top = view.top + hintH + Math.max(0, (view.height - hintH - gridH) / 2);
+      var spacer = document.createElement("div");
+      spacer.className = "unit-grid-spacer";
+      spacer.style.height = placeHeight + "px";
+      spacer.setAttribute("aria-hidden", "true");
+      var backdrop = document.createElement("div");
+      backdrop.id = "assign-backdrop";
+      backdrop.className = "assign-backdrop";
+      backdrop.setAttribute("aria-hidden", "true");
+      var hint = document.createElement("div");
+      hint.id = "assign-hint";
+      hint.className = "assign-hint";
+      hint.setAttribute("aria-hidden", "true");
+      hint.textContent = "שחררו על יחידה";
+      hint.style.top = Math.max(view.top + 10, top - 46) + "px";
+      grid.parentNode.insertBefore(backdrop, grid);
+      grid.parentNode.insertBefore(hint, grid);
+      grid.parentNode.insertBefore(spacer, grid);
+      grid.classList.remove("is-intro", "is-arriving");
+      grid.classList.add("is-assign-mode");
+      grid.style.setProperty("--fit-zoom", String(zoom));
+      grid.style.setProperty("--fit-cols", String(best.cols));
+      grid.style.setProperty("--fit-w", cellW + "px");
+      grid.style.setProperty("--fit-h", cellH + "px");
+      grid.style.setProperty("--fit-base-w", measured.baseW + "px");
+      grid.style.setProperty("--fit-base-h", measured.baseH + "px");
+      grid.style.position = "fixed";
+      grid.style.left = left + "px";
+      grid.style.top = top + "px";
+      grid.style.width = gridW + "px";
+      grid.style.height = gridH + "px";
+      grid.style.margin = "0";
+      grid.style.zIndex = "36";
+      document.body.classList.add("is-assigning");
+      for (var a = 0; a < tiles.length; a++) tiles[a].style.animation = "none";
+      assignOverview = {
+        grid: grid,
+        tiles: tiles,
+        spacer: spacer,
+        backdrop: backdrop,
+        hint: hint
+      };
+      assignGeneration += 1;
+      var generation = assignGeneration;
+      if (!motionOk()) return;
+      flyTiles(tiles, fromRects, zoom, measured.baseW);
+      settleAssignTiles(tiles, generation);
+    }
+
+    function finishAssignOverview() {
+      var state = assignOverview;
+      if (!state) return;
+      assignOverview = null;
+      var generation = assignGeneration + 1;
+      assignGeneration = generation;
+      var grid = state.grid;
+      var tiles = [];
+      for (var i = 0; i < state.tiles.length; i++) {
+        if (state.tiles[i].isConnected) tiles.push(state.tiles[i]);
+      }
+      if (!grid || !grid.isConnected || !tiles.length || !motionOk()) {
+        for (var c = 0; c < tiles.length; c++) clearTileMotion(tiles[c]);
+        if (grid && grid.isConnected) restoreAssignGrid(state);
+        removeAssignChrome(state);
+        return;
+      }
+      var fromRects = [];
+      for (var f = 0; f < tiles.length; f++) fromRects.push(tiles[f].getBoundingClientRect());
+      for (var m = 0; m < tiles.length; m++) clearTileMotion(tiles[m]);
+      restoreAssignGrid(state);
+      removeAssignChrome(state);
+      flyTiles(tiles, fromRects, 1, 0);
+      settleAssignTiles(tiles, generation);
+    }
 
     function clearFreshDrop() {
       var marked = document.querySelectorAll(".unit-tile.is-drop");
@@ -9058,12 +10043,16 @@
           event.dataTransfer.effectAllowed = "move";
         }
         row.classList.add("is-dragging");
+        window.requestAnimationFrame(function () {
+          if (freshDragKey) beginAssignOverview();
+        });
       });
       profile.addEventListener("dragend", function (event) {
         var row = event.target.closest && event.target.closest(".fresh-row");
         if (row) row.classList.remove("is-dragging");
         clearFreshDrop();
         freshDragKey = "";
+        finishAssignOverview();
         window.setTimeout(function () { suppressFreshClick = false; }, 0);
       });
       profile.addEventListener("dragover", function (event) {
@@ -9156,6 +10145,537 @@
       anim.oncancel = removeChip;
     }
 
+    function hexToRgb(hex) {
+      var text = String(hex || "").replace("#", "");
+      if (text.length === 3) text = text.replace(/./g, function (ch) { return ch + ch; });
+      var n = parseInt(text, 16);
+      if (!isFinite(n) || text.length !== 6) return { r: 152, g: 162, b: 179 };
+      return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+    }
+
+    function mixHex(hex, toward, amount) {
+      var a = hexToRgb(hex);
+      var b = hexToRgb(toward);
+      function ch(x, y) { return Math.round(x + (y - x) * amount); }
+      function byte(n) {
+        var h = n.toString(16);
+        return h.length === 1 ? "0" + h : h;
+      }
+      return "#" + byte(ch(a.r, b.r)) + byte(ch(a.g, b.g)) + byte(ch(a.b, b.b));
+    }
+
+    function pieColorOf(unit, index) {
+      var fallback = ["#0064e0", "#087443", "#b54708", "#6941c6", "#0e7090", "#b42318", "#3b7d23", "#c45911"];
+      var accent = unitAccent(unit);
+      if (/^#[0-9A-Fa-f]{6}$/.test(accent)) return accent;
+      return fallback[index % fallback.length];
+    }
+
+    function arcPath(cx, cy, rInner, rOuter, a0, a1) {
+      var span = a1 - a0;
+      if (span <= 0.0001 || rOuter <= rInner) return "";
+      if (span >= Math.PI * 2 - 0.001) {
+        var mid = a0 + Math.PI;
+        return arcPath(cx, cy, rInner, rOuter, a0, mid) + arcPath(cx, cy, rInner, rOuter, mid, a1 - 0.0001);
+      }
+      var large = span > Math.PI ? 1 : 0;
+      function pt(r, a) {
+        return [(cx + r * Math.sin(a)).toFixed(2), (cy - r * Math.cos(a)).toFixed(2)];
+      }
+      var o0 = pt(rOuter, a0);
+      var o1 = pt(rOuter, a1);
+      var i1 = pt(rInner, a1);
+      var i0 = pt(rInner, a0);
+      return "M" + o0[0] + " " + o0[1] +
+        "A" + rOuter.toFixed(2) + " " + rOuter.toFixed(2) + " 0 " + large + " 1 " + o1[0] + " " + o1[1] +
+        "L" + i1[0] + " " + i1[1] +
+        "A" + rInner.toFixed(2) + " " + rInner.toFixed(2) + " 0 " + large + " 0 " + i0[0] + " " + i0[1] + "Z";
+    }
+
+    function professionQuotaCount(unit, profession) {
+      if (quotaModeOf(unit) !== "profession") return 0;
+      var raw = unit.quotaBy && unit.quotaBy[profession];
+      if (!present(raw)) return 0;
+      var n = Number(digits(raw));
+      return isFinite(n) && n > 0 ? n : 0;
+    }
+
+    function professionActualCount(unit, profession) {
+      return unitStaffCounts(unit.id).counts[profession] || 0;
+    }
+
+    function roleStandard(unit, profession) {
+      var actual = professionActualCount(unit, profession);
+      if (quotaModeOf(unit) === "profession") {
+        var quota = professionQuotaCount(unit, profession);
+        return { quota: quota, actual: actual, kind: quota > 0 ? "profession" : (actual > 0 ? "actual" : "empty") };
+      }
+      var general = Number(digits(unit && unit.quota));
+      if (!isFinite(general) || general <= 0) {
+        return { quota: 0, actual: actual, kind: actual > 0 ? "actual" : "empty" };
+      }
+      return { quota: general, actual: actual, kind: "general" };
+    }
+
+    function statsToggleHtml() {
+      var open = Boolean(state.statsOpen);
+      var label = open ? "סגירת הסטטיסטיקות" : "פתיחת הסטטיסטיקות";
+      return '<button class="stats-toggle" type="button" data-action="toggle-stats" aria-expanded="' +
+        (open ? "true" : "false") + '" aria-controls="units-stats" title="' + esc(label) + '" aria-label="' + esc(label) + '">' +
+        '<span class="stats-toggle-label">סטטיסטיקות</span>' +
+        '<span class="stats-toggle-icon">' + svg("chevron", 16) + "</span></button>";
+    }
+
+    function pieRowHtml(row) {
+      var quota = row.quota;
+      var actual = row.actual;
+      var ratio = quota > 0 ? actual / quota : (actual > 0 ? 1 : 0);
+      var stateClass = row.kind === "empty" ? "is-empty" : (quota > 0 && actual > quota ? "is-over" : (quota > 0 && actual < quota ? "is-short" : "is-full"));
+      var fillPct = Math.round(Math.max(0, Math.min(ratio, 1)) * 100);
+      var ratioHtml = row.kind === "empty"
+        ? '<span class="pie-ratio is-empty">אין תקן</span>'
+        : (row.kind === "actual"
+          ? '<span class="pie-ratio is-over"><b>' + actual + '</b><small>בלי תקן</small></span>'
+          : '<span class="pie-ratio ' + stateClass + '"><b>' + actual + "</b><span>/" + quota + "</span>" +
+            (row.kind === "general" ? "<small>כללי</small>" : "") + "</span>");
+      var mode = statsPieMode();
+      var detail = sliceDetail(row, mode);
+      var meter = row.kind === "empty" ? "" :
+        '<span class="pie-meter"><span style="width:' + fillPct + "%;background:" + row.color + '"></span></span>';
+      var dim = mode === "actual" && actual <= 0 ? " is-dim" : "";
+      return '<li class="pie-row' + dim + '" data-unit="' + esc(row.unit.id) + '" data-name="' + esc(row.unit.name) +
+        '" data-detail="' + esc(detail) + '" data-color="' + esc(row.color) + '">' +
+        '<span class="pie-swatch" style="--pie:' + row.color + '"></span>' +
+        '<span class="pie-name">' + esc(row.unit.name) + "</span>" +
+        ratioHtml + meter + "</li>";
+    }
+
+    function statsPieMode() {
+      return state.statsPie === "actual" ? "actual" : "quota";
+    }
+
+    function pieModeNote(mode) {
+      return mode === "actual"
+        ? "גודל הפרוסה הוא כמה חיילים יש ביחידה בפועל במקצוע."
+        : "גודל הפרוסה הוא התקן. הצבע המלא הוא מי שמשובץ, והבהיר הוא מה שחסר.";
+    }
+
+    function prefersStill() {
+      return window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    }
+
+    function gapNumbers(unit) {
+      var gap = quotaGap(unit);
+      var have = unitStaffCounts(unit.id).total;
+      var row = { target: 0, have: have, filled: 0, missing: 0, extra: 0, kind: "none" };
+      if (!gap) return row;
+      row.target = gap.target;
+      row.filled = gap.filled;
+      row.kind = gap.kind;
+      if (gap.kind === "general") {
+        row.missing = gap.missing;
+        row.extra = gap.extra;
+      } else {
+        gap.missing.forEach(function (bit) { row.missing += Number(bit.count) || 0; });
+        gap.extra.forEach(function (bit) { row.extra += Number(bit.count) || 0; });
+      }
+      return row;
+    }
+
+    function armFigures() {
+      var quota = 0;
+      var filled = 0;
+      var missing = 0;
+      var extra = 0;
+      var bare = 0;
+      var rows = [];
+      UNITS.forEach(function (unit, index) {
+        var nums = gapNumbers(unit);
+        if (nums.kind === "none") {
+          if (nums.have) bare += nums.have;
+        } else {
+          quota += nums.target;
+          filled += nums.filled;
+          missing += nums.missing;
+          extra += nums.extra;
+        }
+        rows.push({
+          unit: unit,
+          index: index,
+          color: pieColorOf(unit, index),
+          target: nums.target,
+          have: nums.have,
+          missing: nums.missing,
+          extra: nums.extra,
+          kind: nums.kind
+        });
+      });
+      rows.sort(function (a, b) {
+        var aNone = a.kind === "none" ? 1 : 0;
+        var bNone = b.kind === "none" ? 1 : 0;
+        if (aNone !== bNone) return aNone - bNone;
+        if (b.missing !== a.missing) return b.missing - a.missing;
+        if (b.target !== a.target) return b.target - a.target;
+        return a.index - b.index;
+      });
+      return { quota: quota, filled: filled, missing: missing, extra: extra, bare: bare, rows: rows };
+    }
+
+    function missingPhrase(n) {
+      n = Number(n) || 0;
+      return n === 1 ? "חסר 1" : "חסרים " + n;
+    }
+
+    function renderArmSummary() {
+      var arm = armFigures();
+      var pills = '<span class="arm-pill"><b>' + arm.filled + "</b> בפועל</span>" +
+        '<span class="arm-pill is-short"><b>' + arm.missing + "</b> " + (arm.missing === 1 ? "חסר" : "חסרים") + "</span>";
+      if (arm.extra) pills += '<span class="arm-pill is-over"><b>' + arm.extra + "</b> עודף</span>";
+      var note = "";
+      if (arm.bare) {
+        note = '<p class="arm-sum-note">' + (arm.bare === 1
+          ? "חייל אחד ביחידה בלי תקן לא נספר בחוסר."
+          : arm.bare + " חיילים ביחידות בלי תקן לא נספרים בחוסר.") + "</p>";
+      }
+      var rows = arm.rows.map(function (row) {
+        var status = "אין תקן";
+        var statusClass = "is-empty";
+        if (row.kind !== "none") {
+          if (row.missing) {
+            status = missingPhrase(row.missing);
+            statusClass = "is-short";
+          } else if (row.extra) {
+            status = "עודף " + row.extra;
+            statusClass = "is-over";
+          } else {
+            status = "מלא";
+            statusClass = "is-full";
+          }
+        } else if (row.have) {
+          status = row.have + " בפועל";
+        }
+        var ratio = row.kind === "none"
+          ? '<span class="arm-gap-ratio">בלי תקן</span>'
+          : (row.target > 0
+            ? '<span class="arm-gap-ratio"><b>' + row.have + "</b>/" + row.target + "</span>"
+            : '<span class="arm-gap-ratio">תקן 0</span>');
+        var tip = row.unit.name + ": תקן " + row.target + ", בפועל " + row.have;
+        if (row.missing) tip += ", " + missingPhrase(row.missing);
+        if (row.extra) tip += ", עודף " + row.extra;
+        return '<li class="arm-gap" title="' + esc(tip) + '">' +
+          '<i style="background:' + row.color + '"></i>' +
+          '<span class="arm-gap-name">' + esc(row.unit.name) + "</span>" +
+          '<span class="arm-gap-status ' + statusClass + '">' + esc(status) + "</span>" +
+          ratio + "</li>";
+      }).join("");
+      return '<section class="arm-sum" aria-label="תקן בזרוע">' +
+        '<span class="arm-sum-kicker">סך תקן בזרוע</span>' +
+        '<strong class="arm-sum-total">' + arm.quota + "</strong>" +
+        '<div class="arm-sum-pills">' + pills + "</div>" +
+        note +
+        '<p class="arm-sum-label">חסרים לפי יחידה</p>' +
+        '<ul class="arm-gaps">' + rows + "</ul></section>";
+    }
+
+    function pieModeHtml() {
+      var mode = statsPieMode();
+      return '<div class="pie-mode' + (mode === "actual" ? " is-actual" : "") + '" role="group" aria-label="הצגת העוגות">' +
+        '<i class="pie-mode-thumb" aria-hidden="true"></i>' +
+        '<button type="button" data-action="pie-mode" data-mode="quota" aria-pressed="' + (mode === "quota" ? "true" : "false") + '">לפי תקן</button>' +
+        '<button type="button" data-action="pie-mode" data-mode="actual" aria-pressed="' + (mode === "actual" ? "true" : "false") + '">בפועל</button>' +
+        "</div>";
+    }
+
+    function orderedRoleRows(part) {
+      var rows = [];
+      UNITS.forEach(function (unit, index) {
+        var info = roleStandard(unit, part.profession);
+        rows.push({
+          unit: unit,
+          index: index,
+          quota: info.quota,
+          actual: info.actual,
+          kind: info.kind,
+          quotaWeight: info.kind === "actual" ? info.actual : info.quota,
+          actualWeight: info.actual,
+          color: pieColorOf(unit, index)
+        });
+      });
+      rows.sort(function (a, b) {
+        if (b.quotaWeight !== a.quotaWeight) return b.quotaWeight - a.quotaWeight;
+        return a.index - b.index;
+      });
+      return rows;
+    }
+
+    function modeWeight(row, mode) {
+      return mode === "actual" ? row.actualWeight : row.quotaWeight;
+    }
+
+    function filledRatio(row, mode) {
+      if (mode === "actual") return row.actual > 0 ? 1 : 0;
+      if (row.quota > 0) return Math.max(0, Math.min(row.actual, row.quota)) / row.quota;
+      return row.actual > 0 ? 1 : 0;
+    }
+
+    function sliceDetail(row, mode) {
+      if (mode === "actual") {
+        if (!row.actual && row.quota) return "אין בפועל, תקן " + row.quota;
+        if (row.quota) return row.actual + " בפועל, מתוך תקן " + row.quota;
+        if (row.actual) return row.actual + " בפועל, בלי תקן";
+        return "אין תקן";
+      }
+      if (row.quota) return row.actual + " מתוך " + row.quota + (row.kind === "general" ? " כללי" : "");
+      if (row.actual) return row.actual + " בפועל, בלי תקן";
+      return "אין תקן";
+    }
+
+    function layoutWeights(rows, weights, fills) {
+      var total = 0;
+      var i;
+      for (i = 0; i < weights.length; i++) total += weights[i];
+      var cursor = 0;
+      var items = [];
+      var last = -1;
+      for (i = 0; i < rows.length; i++) {
+        var span = total > 0 ? weights[i] / total * Math.PI * 2 : 0;
+        var a0 = cursor;
+        cursor += span;
+        if (weights[i] > 0.0001) last = i;
+        items.push({ row: rows[i], a0: a0, a1: a0 + span, filled: fills[i] });
+      }
+      if (last >= 0) items[last].a1 = Math.PI * 2;
+      return { total: total, items: items };
+    }
+
+    function sliceGeometry(a0, a1, filled) {
+      var span = a1 - a0;
+      if (span <= 0.004) return { solid: "", pale: "" };
+      var pad = span > 0.08 ? 0.012 : 0;
+      var draw0 = a0 + pad;
+      var draw1 = a1 - pad;
+      if (draw1 <= draw0) {
+        draw0 = a0;
+        draw1 = a1;
+      }
+      var split = draw0 + (draw1 - draw0) * filled;
+      return {
+        solid: filled > 0.004 ? arcPath(50, 50, 24, 46, draw0, split) : "",
+        pale: filled < 0.996 ? arcPath(50, 50, 24, 46, filled > 0.004 ? split : draw0, draw1) : ""
+      };
+    }
+
+    function applySlice(group, item) {
+      var solid = group.querySelector(".pie-solid");
+      var pale = group.querySelector(".pie-pale");
+      var geo = sliceGeometry(item.a0, item.a1, item.filled);
+      if (!geo.solid && !geo.pale) group.classList.add("is-off");
+      else group.classList.remove("is-off");
+      solid.setAttribute("d", geo.solid);
+      pale.setAttribute("d", geo.pale);
+      solid.setAttribute("fill", item.row.color);
+      pale.setAttribute("fill", mixHex(item.row.color, "#ffffff", 0.4));
+      group.setAttribute("data-detail", sliceDetail(item.row, statsPieMode()));
+    }
+
+    function legendHtml(rows, mode) {
+      if (mode === "actual") return rows.map(pieRowHtml).join("");
+      var shown = [];
+      var rest = [];
+      rows.forEach(function (row) {
+        if (row.quotaWeight > 0) shown.push(row);
+        else rest.push(row);
+      });
+      var html = shown.map(pieRowHtml).join("");
+      if (rest.length) html += '<li class="pie-sep">בלי תקן</li>' + rest.map(pieRowHtml).join("");
+      return html;
+    }
+
+    function pieCaption(total, mode) {
+      var n = Math.max(0, Math.round(total));
+      return mode === "actual" ? n + " בפועל" : n + " בתקן";
+    }
+
+    function paintPieJob(job, e, toMode) {
+      var weights = [];
+      var fills = [];
+      var bagW = {};
+      var bagF = {};
+      job.rows.forEach(function (row, index) {
+        var w = job.fromW[index] + (job.toW[index] - job.fromW[index]) * e;
+        var f = job.fromF[index] + (job.toF[index] - job.fromF[index]) * e;
+        weights.push(w);
+        fills.push(f);
+        bagW[row.unit.id] = w;
+        bagF[row.unit.id] = f;
+      });
+      if (!pieAnimWeights) pieAnimWeights = {};
+      if (!pieAnimFills) pieAnimFills = {};
+      pieAnimWeights[job.part.profession] = bagW;
+      pieAnimFills[job.part.profession] = bagF;
+      var laid = layoutWeights(job.rows, weights, fills);
+      var groups = job.card.querySelectorAll(".pie-slice");
+      var i;
+      for (i = 0; i < groups.length && i < laid.items.length; i++) applySlice(groups[i], laid.items[i]);
+      var num = job.card.querySelector(".pie-center-num");
+      var sub = job.card.querySelector(".pie-center-sub");
+      var shown = job.fromTotal + (job.toTotal - job.fromTotal) * e;
+      if (num) num.textContent = String(Math.max(0, Math.round(shown)));
+      if (sub) sub.textContent = toMode === "actual" ? "בפועל" : "תקן";
+      var chart = job.card.querySelector(".pie-chart");
+      var note = chart && chart.querySelector(".pie-empty-note");
+      if (chart && job.toTotal > 0) {
+        chart.classList.remove("is-empty");
+        if (note) note.hidden = true;
+      } else if (chart && e > 0.82) {
+        chart.classList.add("is-empty");
+        if (note) note.hidden = false;
+      }
+    }
+
+    function refreshPieLegend(card, rows, mode) {
+      var legend = card.querySelector(".pie-legend");
+      if (!legend) return;
+      legend.innerHTML = legendHtml(rows, mode);
+      legend.classList.remove("is-swap");
+      void legend.offsetWidth;
+      legend.classList.add("is-swap");
+      var head = card.querySelector(".pie-card-head p");
+      var total = 0;
+      rows.forEach(function (row) { total += modeWeight(row, mode); });
+      if (head) head.textContent = pieCaption(total, mode) + " · " + UNITS.length + " יחידות";
+    }
+
+    function animateProfessionPies(fromMode, toMode) {
+      pieAnimToken += 1;
+      var token = pieAnimToken;
+      var jobs = [];
+      QUOTA_PARTS.forEach(function (part) {
+        var card = document.querySelector('.pie-card[data-profession="' + part.profession + '"]');
+        if (!card) return;
+        var rows = orderedRoleRows(part);
+        var fromW = [];
+        var toW = [];
+        var fromF = [];
+        var toF = [];
+        var savedW = pieAnimWeights && pieAnimWeights[part.profession];
+        var savedF = pieAnimFills && pieAnimFills[part.profession];
+        rows.forEach(function (row) {
+          fromW.push(savedW && savedW[row.unit.id] != null ? savedW[row.unit.id] : modeWeight(row, fromMode));
+          toW.push(modeWeight(row, toMode));
+          fromF.push(savedF && savedF[row.unit.id] != null ? savedF[row.unit.id] : filledRatio(row, fromMode));
+          toF.push(filledRatio(row, toMode));
+        });
+        var fromTotal = 0;
+        var toTotal = 0;
+        fromW.forEach(function (w) { fromTotal += w; });
+        toW.forEach(function (w) { toTotal += w; });
+        jobs.push({
+          card: card,
+          part: part,
+          rows: rows,
+          fromW: fromW,
+          toW: toW,
+          fromF: fromF,
+          toF: toF,
+          fromTotal: fromTotal,
+          toTotal: toTotal
+        });
+        refreshPieLegend(card, rows, toMode);
+      });
+      function finish() {
+        if (token !== pieAnimToken) return;
+        jobs.forEach(function (job) {
+          if (job.card.isConnected) paintPieJob(job, 1, toMode);
+        });
+        pieAnimWeights = null;
+        pieAnimFills = null;
+      }
+      if (prefersStill()) {
+        finish();
+        return;
+      }
+      var t0 = 0;
+      function frame(now) {
+        if (token !== pieAnimToken) return;
+        if (!t0) t0 = now;
+        var t = Math.min(1, (now - t0) / 680);
+        var eased = 1 - Math.pow(1 - t, 3);
+        jobs.forEach(function (job) {
+          if (job.card.isConnected) paintPieJob(job, eased, toMode);
+        });
+        if (t < 1) requestAnimationFrame(frame);
+        else finish();
+      }
+      requestAnimationFrame(frame);
+    }
+
+    function syncPieModeControl() {
+      var mode = statsPieMode();
+      var box = document.querySelector("#units-stats .pie-mode");
+      if (box) {
+        box.classList.toggle("is-actual", mode === "actual");
+        var buttons = box.querySelectorAll("[data-action='pie-mode']");
+        var i;
+        for (i = 0; i < buttons.length; i++) {
+          buttons[i].setAttribute("aria-pressed", buttons[i].getAttribute("data-mode") === mode ? "true" : "false");
+        }
+      }
+      var note = document.getElementById("pie-mode-note");
+      if (note) note.textContent = pieModeNote(mode);
+      var key = document.querySelector("#units-stats .pie-key");
+      if (key) {
+        if (mode === "actual") key.setAttribute("hidden", "");
+        else key.removeAttribute("hidden");
+      }
+    }
+
+    function renderProfessionPie(part) {
+      var mode = statsPieMode();
+      var rows = orderedRoleRows(part);
+      var weights = [];
+      var fills = [];
+      rows.forEach(function (row) {
+        weights.push(modeWeight(row, mode));
+        fills.push(filledRatio(row, mode));
+      });
+      var laid = layoutWeights(rows, weights, fills);
+      var paths = "";
+      laid.items.forEach(function (item) {
+        var geo = sliceGeometry(item.a0, item.a1, item.filled);
+        var off = !geo.solid && !geo.pale ? " is-off" : "";
+        paths += '<g class="pie-slice' + off + '" data-unit="' + esc(item.row.unit.id) + '" data-name="' + esc(item.row.unit.name) +
+          '" data-detail="' + esc(sliceDetail(item.row, mode)) + '" data-color="' + esc(item.row.color) + '">' +
+          '<path class="pie-solid" fill="' + item.row.color + '" stroke="#fff" stroke-width="0.6" d="' + geo.solid + '"></path>' +
+          '<path class="pie-pale" fill="' + mixHex(item.row.color, "#ffffff", 0.4) + '" stroke="#fff" stroke-width="0.6" d="' + geo.pale + '"></path></g>';
+      });
+      var caption = pieCaption(laid.total, mode);
+      var head = '<div class="pie-card-head"><h3>' + esc(part.profession) + "</h3><p>" +
+        caption + " · " + UNITS.length + " יחידות</p></div>";
+      var chart = '<div class="pie-chart' + (laid.total <= 0 ? " is-empty" : "") + '"><svg viewBox="0 0 100 100" role="img" aria-label="' +
+        esc(part.profession + ", " + caption) + '">' + paths +
+        '<text class="pie-center-num" x="50" y="48" text-anchor="middle">' + Math.max(0, Math.round(laid.total)) + "</text>" +
+        '<text class="pie-center-sub" x="50" y="58" text-anchor="middle">' + (mode === "actual" ? "בפועל" : "תקן") + "</text></svg>" +
+        '<p class="pie-empty-note"' + (laid.total <= 0 ? "" : " hidden") + '>אין כרגע חיילים במקצוע הזה.</p></div>';
+      return '<article class="pie-card" data-profession="' + esc(part.profession) + '">' + head + chart +
+        '<ul class="pie-legend">' + legendHtml(rows, mode) + "</ul></article>";
+    }
+
+    function renderUnitStats() {
+      var open = Boolean(state.statsOpen);
+      var mode = statsPieMode();
+      return '<aside class="units-stats" id="units-stats" aria-label="סטטיסטיקות תקן"' +
+        (open ? "" : ' aria-hidden="true" inert') + ">" +
+        '<div class="units-stats-inner">' +
+          "<h3>סטטיסטיקות</h3>" +
+          renderArmSummary() +
+          pieModeHtml() +
+          '<p class="pie-mode-note" id="pie-mode-note">' + esc(pieModeNote(mode)) + "</p>" +
+          '<p class="pie-key"' + (mode === "actual" ? " hidden" : "") + '><span><i class="pie-key-solid"></i>בפועל</span><span><i class="pie-key-pale"></i>חסר בתקן</span></p>' +
+          '<div class="units-stats-pies">' + QUOTA_PARTS.map(renderProfessionPie).join("") + "</div>" +
+        "</div></aside>";
+    }
+
     function renderUnitsHome(opts) {
       opts = opts || {};
       fillSelect(document.getElementById("filter-cycle"), valuesOf(SOLDIERS, "cycle"), "כל המחזורים");
@@ -9216,8 +10736,13 @@
         '<div class="units-board" id="units-board">' +
           renderIntake() +
           renderFreshBoard() +
-          '<div class="units-board-head"><h2>היחידות</h2><p>' + esc(summary) + "</p></div>" +
-          '<div class="unit-grid">' + UNITS.map(renderUnitCard).join("") + addTile + "</div>" +
+          '<div class="units-board-head"><div class="units-board-head-copy"><h2>היחידות</h2><p>' + esc(summary) + "</p></div>" +
+            statsToggleHtml() +
+          "</div>" +
+          '<div class="units-stage' + (state.statsOpen ? " is-stats" : "") + '">' +
+            '<div class="units-stage-main"><div class="unit-grid">' + UNITS.map(renderUnitCard).join("") + addTile + "</div></div>" +
+            renderUnitStats() +
+          "</div>" +
           renderArchiveBoard() +
         "</div>";
       document.getElementById("add-btn").hidden = true;
@@ -9835,7 +11360,7 @@
         var sideOne = state.releasedOpen ? "משוחרר" : "חייל";
         var sideMany = state.releasedOpen ? "משוחררים" : "חיילים";
         picker.innerHTML =
-          '<button class="back-units" type="button" data-action="units-home">' + svg("chevron", 20) + "<span>כל היחידות</span></button>" +
+          navBack("units-home", "חזרה לכל היחידות", { cls: "back-units" }) +
           '<article class="unit-tile archive-card">' +
             '<div class="unit-tile-open unit-tile-static">' +
               '<span class="unit-tile-name">' + esc(sideName) + "</span>" +
@@ -9853,7 +11378,7 @@
         return;
       }
       picker.innerHTML =
-        '<button class="back-units" type="button" data-action="units-home">' + svg("chevron", 20) + "<span>כל היחידות</span></button>" +
+        navBack("units-home", "חזרה לכל היחידות", { cls: "back-units" }) +
         unitCardView(unit, false);
     }
 
@@ -10200,7 +11725,7 @@
       pop.dataset.month = String(month);
       pop.innerHTML =
         '<div class="date-nav">' +
-          '<button class="text-btn" type="button" data-action="date-days">חזרה</button>' +
+          navBack("date-days", "חזרה", { small: true, aria: "חזרה לבחירת יום" }) +
           "<strong>בחירת שנה</strong>" +
           '<span class="date-nav-gap" aria-hidden="true"></span>' +
         "</div>" +
@@ -11048,7 +12573,7 @@
       }).join("");
       profile.innerHTML =
         '<div class="units-board">' +
-          '<div class="log-head"><div><button class="text-btn" type="button" data-action="close-log">חזרה</button><h2>יומן</h2><p>' + esc(summary) + ". " + esc(note) + "</p></div>" +
+          '<div class="log-head"><div>' + navBack("close-log", logBackLabel(), { esc: true }) + '<h2>יומן</h2><p>' + esc(summary) + ". " + esc(note) + "</p></div>" +
           '<input class="log-search" id="log-search" type="search" value="' + esc(state.logQuery) + '" placeholder="' + esc(placeholder) + '" aria-label="חיפוש ביומן">' +
           "</div>" +
           '<div class="log-tabs" role="tablist" aria-label="מדורי היומן">' + tabButtons + "</div>" +
@@ -11149,7 +12674,12 @@
 
     function render(opts) {
       opts = opts || {};
+      pieAnimToken += 1;
+      pieAnimWeights = null;
+      pieAnimFills = null;
+      releaseAssignOverview();
       hideHitPop();
+      hidePieTip();
       var openPalette = document.getElementById("color-palette");
       if (openPalette) openPalette.remove();
       syncShell();
@@ -11570,6 +13100,26 @@
         if (!tile) return;
         showHitPop(tile);
       });
+      document.getElementById("profile").addEventListener("pointerover", function (event) {
+        var node = event.target.closest(".pie-slice, .pie-row");
+        if (!node || !node.getAttribute("data-name")) return;
+        showPieTip(node, event);
+      });
+      document.getElementById("profile").addEventListener("pointermove", function (event) {
+        if (!pieTipNode) return;
+        if (!pieTipNode.isConnected) {
+          hidePieTip();
+          return;
+        }
+        placePieTip(event);
+      });
+      document.getElementById("profile").addEventListener("pointerout", function (event) {
+        if (!pieTipNode) return;
+        var next = event.relatedTarget;
+        if (next && pieTipNode.contains(next)) return;
+        if (next && next.closest && next.closest(".pie-slice, .pie-row")) return;
+        hidePieTip();
+      });
       document.getElementById("profile").addEventListener("mouseout", function (event) {
         var tile = event.target.closest(".unit-tile.is-hit");
         if (!tile || !tile.isConnected) return;
@@ -11589,6 +13139,11 @@
         hideHitPop();
       });
       window.addEventListener("resize", function () {
+        if (state.statsOpen) {
+          var statsStage = document.querySelector("#units-board .units-stage");
+          var statsPane = document.getElementById("units-stats");
+          if (statsStage && statsPane) statsPane.style.width = Math.max(0, Math.round((statsStage.clientWidth - 16) * 0.3)) + "px";
+        }
         if (!hitPopUnit) return;
         var openHit = document.querySelector(unitTileSelector(hitPopUnit));
         var hitTile = openHit && openHit.closest(".unit-tile");
@@ -11943,6 +13498,55 @@
           return;
         }
         if (state.unitsHome) {
+          if (event.target.closest("[data-action='toggle-stats']")) {
+            state.statsOpen = !state.statsOpen;
+            var stage = document.querySelector("#units-board .units-stage");
+            var statsPanel = document.getElementById("units-stats");
+            if (statsPanel && stage) {
+              var statsNow = Math.round(statsPanel.getBoundingClientRect().width);
+              statsPanel.style.width = statsNow + "px";
+              statsPanel.style.marginInlineStart = statsNow > 0 ? "16px" : "0px";
+              void statsPanel.offsetWidth;
+              stage.classList.toggle("is-stats", state.statsOpen);
+              statsPanel.style.width = (state.statsOpen ? Math.max(0, Math.round((stage.clientWidth - 16) * 0.3)) : 0) + "px";
+              statsPanel.style.marginInlineStart = state.statsOpen ? "16px" : "0px";
+            } else if (stage) {
+              stage.classList.toggle("is-stats", state.statsOpen);
+            }
+            var statsToggle = document.querySelector("#units-board [data-action='toggle-stats']");
+            var statsLabel = state.statsOpen ? "סגירת הסטטיסטיקות" : "פתיחת הסטטיסטיקות";
+            if (statsToggle) {
+              statsToggle.setAttribute("aria-expanded", state.statsOpen ? "true" : "false");
+              statsToggle.setAttribute("aria-label", statsLabel);
+              statsToggle.setAttribute("title", statsLabel);
+            }
+            if (statsPanel) {
+              if (state.statsOpen) {
+                statsPanel.removeAttribute("aria-hidden");
+                statsPanel.removeAttribute("inert");
+              } else {
+                statsPanel.setAttribute("aria-hidden", "true");
+                statsPanel.setAttribute("inert", "");
+              }
+            }
+            var statsLive = document.getElementById("live");
+            if (statsLive) statsLive.textContent = state.statsOpen ? "סטטיסטיקות התקן נפתחו" : "סטטיסטיקות התקן נסגרו";
+            return;
+          }
+          var pieModeBtn = event.target.closest("[data-action='pie-mode']");
+          if (pieModeBtn) {
+            var nextPie = pieModeBtn.getAttribute("data-mode");
+            if (nextPie !== "quota" && nextPie !== "actual") return;
+            if (nextPie === statsPieMode()) return;
+            var prevPie = statsPieMode();
+            state.statsPie = nextPie;
+            hidePieTip();
+            syncPieModeControl();
+            animateProfessionPies(prevPie, nextPie);
+            var pieLive = document.getElementById("live");
+            if (pieLive) pieLive.textContent = nextPie === "actual" ? "העוגות מוצגות לפי מה שקיים בפועל" : "העוגות מוצגות לפי התקן";
+            return;
+          }
           var homeClearPhoto = event.target.closest("[data-action='clear-photo']");
           if (homeClearPhoto) {
             setSoldierPhoto(homeClearPhoto.getAttribute("data-key") || "", "");
